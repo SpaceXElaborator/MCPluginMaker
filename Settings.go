@@ -78,7 +78,7 @@ func initSettings() {
 		groupId := group.FindStringSubmatch(pomString)
 		artifactId := artifact.FindStringSubmatch(pomString)
 		descriptionField := description.FindStringSubmatch(pomString)
-		newProj := Project{f.Name(), GetAuthor(), groupId[1], artifactId[1], descriptionField[1], []Command{}}
+		newProj := Project{f.Name(), GetAuthor(), groupId[1], artifactId[1], descriptionField[1], []Command{}, []CustomItem{}}
 		
 		// Check if there are any commands that needs to be loaded
 		cmds, err := ioutil.ReadDir("./projects/" + f.Name() + "/src/main/java/com/" + GetAuthor() + "/net/cmds")
