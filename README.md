@@ -1,6 +1,18 @@
 # MCPluginMaker
 A Minecraft plugin maker using Maven, Go, and Java.
 -----------------------------------------------------------
+## Installation
+* Download maven from https://maven.apache.org/download.cgi under the "Files" header
+* Place extracted folder anywhere but keep note of it's location
+* (Windows)
+* In 'Run' Type 'Edit the system envirnment variables' and click on 'Environment Variables..' button near the bottom
+* Double-Click on 'Path' in the 'User variables for {Name}' and Click on 'New' on the left near the top
+* In the text area type '{Path to apache-maven folder}\bin' (I.E. 'C:\apache-maven-3.6.3\bin')
+* Click 'OK', 'OK', 'OK'
+* Download the provided .Exe from the above list and place in a folder on its own (It will create folders and a settings.json in that folder). The .exe will soon be hosted on a website with better instructions along with pictures (In development)
+* Start using!
+## Building Instructions
+To build a project, simply hit the 'Build' button in the main screen after you've made sure the project you are building has been selected from the list on the left. This will place a {Name}-1.0.jar file in your projects\{Name of project}\target folder. Just drag-and-drop that into your plugins folder. Plugin has been built and installed!
 ## Current Features
 * Auto build
 * Create/Load projects
