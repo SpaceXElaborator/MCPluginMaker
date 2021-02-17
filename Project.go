@@ -21,7 +21,7 @@ func createNewProject(name string, xml PomXML) {
 	os.MkdirAll("projects/" + name + "/src/main/java/com/" + GetAuthor() + "/net", os.ModePerm)
 	GetWindow().SetTitle("MCPluginMaker | " + GetAuthor() + " | Project: " + CWP)
 	createPom(xml)
-	proj := Project{CWP, GetAuthor(), xml.GroupID, xml.ArtifactID, xml.Description, []Command{}}
+	proj := Project{CWP, GetAuthor(), xml.GroupID, xml.ArtifactID, xml.Description, []Command{}, []CustomItem{}}
 	PluginProjects = append(PluginProjects, proj)
 	list.Refresh()
 }
@@ -69,10 +69,29 @@ func createMainJava(proj *Project) {
 	f.Close()
 }
 
+func createItemClass(proj *Project) {
+	f, err := os.Create("projects/" + CWP + "/src/main/java/com/terturl/net/" + proj.Name + "CustomItems" + ".java")
+	if err != nil {
+		log.Print("Error: ", err)
+	}
+	
+	t := template.Must(template.New("CreateItems").Parse(itemsJavaTmpl))
+	err = t.Execute(f, &proj)
+	if err != nil {
+		log.Print("Error: ", err)
+	}
+	f.Close()
+}
+
 // Runes the maven command to make all the .java files into a single .jar file that is ready to be ran on a server
 func build(proj *Project) {
 	createYaml(proj)
 	createMainJava(proj)
+	
+	if len(proj.Items) > 0 {
+		createItemClass(proj)
+	}
+	
 	mvnCmd := exec.Command("mvn", "-f", "./projects/" + CWP + "/pom.xml", "package")
 	mvnCmd.Dir = "."
 	output, err := mvnCmd.Output()
