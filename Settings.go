@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"os"
+	"log"
 	"encoding/json"
 	"regexp"
 	"fyne.io/fyne/v2"
