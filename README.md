@@ -1,5 +1,5 @@
 # MCPluginMaker
-A Minecraft plugin maker using Maven, Spigot, Go, and Java.
+A Minecraft plugin maker using Maven, Go, and Java.
 -----------------------------------------------------------
 ## Current Features
 * Auto build
