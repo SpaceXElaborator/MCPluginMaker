@@ -19,14 +19,14 @@ var (
 	addCmdButt = widget.NewButton("Add Command", func() {
 		commandForm := createCommandForm()
 		modal = widget.NewModalPopUp(commandForm, w.Canvas())
-		modal.Resize(fyne.NewSize(512, 240))
+		modal.Resize(fyne.NewSize(512, 0))
 		modal.Show()
 	})
 	
 	addItemButt = widget.NewButton("Add Item", func() {
 		itemForm := customItemForm()
 		modal = widget.NewModalPopUp(itemForm, w.Canvas())
-		modal.Resize(fyne.NewSize(512, 400))
+		modal.Resize(fyne.NewSize(512, 0))
 		modal.Show()
 	})
 	
@@ -56,14 +56,14 @@ func createToolbar() *widget.Toolbar {
 		widget.NewToolbarAction(theme.FolderNewIcon(), func() {
 			newProjectForm := createNewProjectForm()
 			modal = widget.NewModalPopUp(newProjectForm, w.Canvas())
-			modal.Resize(fyne.NewSize(512, 230))
+			modal.Resize(fyne.NewSize(512, 0))
 			modal.Show()
 		}),
 		widget.NewToolbarSpacer(),
 		widget.NewToolbarAction(theme.SettingsIcon(), func() {
 			settingsForm := createSettingsForm()
 			modal = widget.NewModalPopUp(settingsForm, w.Canvas())
-			modal.Resize(fyne.NewSize(512, 384))
+			modal.Resize(fyne.NewSize(512, 0))
 			modal.Show()
 		}),
 	)
