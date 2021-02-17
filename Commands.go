@@ -81,7 +81,7 @@ func createCommandForm() *widget.Form {
 }
 
 func createCommand(cmd Command) {
-	Create parent directors if they aren't present using the current mode permission of the user
+	// Create parent directors if they aren't present using the current mode permission of the user
 	os.MkdirAll("projects/" + CWP + "/src/main/java/com/terturl/net/cmds", os.ModePerm)
 	
 	// GetProject() in Main.go
