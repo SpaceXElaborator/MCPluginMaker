@@ -23,6 +23,13 @@ var (
 		modal.Show()
 	})
 	
+	addItemButt = widget.NewButton("Add Item", func() {
+		itemForm := customItemForm()
+		modal = widget.NewModalPopUp(itemForm, w.Canvas())
+		modal.Resize(fyne.NewSize(512, 400))
+		modal.Show()
+	})
+	
 	addBuildButt = widget.NewButton("Build Project", func() {
 		proj := GetProject(CWP)
 		build(proj)
@@ -75,6 +82,7 @@ func ShowMainMenu() {
 	
 	mainCenter := container.NewVBox(
 			addCmdButt,
+			addItemButt,
 			addBuildButt,
 	)
 	toolbar := createToolbar()
@@ -96,12 +104,14 @@ func ShowMainMenu() {
 // A function to quickly disable all buttons
 func HideButtons() {
 	addCmdButt.Disable()
+	addItemButt.Disable()
 	addBuildButt.Disable()
 }
 
 // A function to quickly enable all buttons
 func UnhideButtons() {
 	addCmdButt.Enable()
+	addItemButt.Enable()
 	addBuildButt.Enable()
 }
 
