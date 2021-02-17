@@ -15,6 +15,8 @@ var (
 	CWP string
 )
 
+// Create a new project with the given name and XML file, reset the name of the window,
+// 		and refresh the plugin list so it shows on the sidebar menu in the GUI
 func createNewProject(name string, xml PomXML) {
 	os.MkdirAll("projects/" + name + "/src/main/java/com/" + GetAuthor() + "/net", os.ModePerm)
 	GetWindow().SetTitle("MCPluginMaker | " + GetAuthor() + " | Project: " + CWP)
@@ -24,6 +26,7 @@ func createNewProject(name string, xml PomXML) {
 	list.Refresh()
 }
 
+// Creates the pom.xml file using the template in Templates.go and a given PomXML struc
 func createPom(xml PomXML) {
 	pom, err := os.Create("projects/" + CWP + "/pom.xml")
 	if err != nil {
@@ -37,12 +40,12 @@ func createPom(xml PomXML) {
 	pom.Close()
 }
 
+// Creates the plugin.yml file using the template in Templates.go and a given Project pointer
 func createYaml(proj *Project) {
 	yml, err := os.Create("projects/" + CWP + "/src/main/java/plugin.yml")
 	if err != nil {
 		log.Print("Error: ", err)
 	}
-	//testStruct := Project{CWP, GetAuthor(), "", "", "", mainAdditions.Cmds}
 	t := template.Must(template.New("CreateYAML").Parse(pluginYmlTmpl))
 	err = t.Execute(yml, &proj)
 	if err != nil {
@@ -51,6 +54,7 @@ func createYaml(proj *Project) {
 	yml.Close()
 }
 
+// Creates the Main.java class using the template from Templates.go and a given Project pointer
 func createMainJava(proj *Project) {
 	f, err := os.Create("projects/" + CWP + "/src/main/java/com/terturl/net/Main.java")
 	if err != nil {
@@ -65,6 +69,7 @@ func createMainJava(proj *Project) {
 	f.Close()
 }
 
+// Runes the maven command to make all the .java files into a single .jar file that is ready to be ran on a server
 func build(proj *Project) {
 	createYaml(proj)
 	createMainJava(proj)
@@ -114,12 +119,13 @@ func createNewProjectForm() *widget.Form {
 	newProjectForm.OnSubmit = func() {
 		if projectNameEntry.Text != "" && projectArtifactEntry.Text != "" && projectDescriptionEntry.Text != "" && projectGroupEntry.Text != "" {
 			if ProjectExists(projectNameEntry.Text) != true {
-				log.Print("Creating New Project: ", projectNameEntry.Text)
+				// Set the CurrentWorkingProject (CWP) to the new Project name to get the folder directory it will be working from
 				CWP = projectNameEntry.Text
 				xml := PomXML{GetAuthor(), CWP, projectGroupEntry.Text, projectArtifactEntry.Text, projectDescriptionEntry.Text}
 				createNewProject(projectNameEntry.Text, xml)
-				UnhideButtons()
 				
+				// HideModal()/UnhideButtons() in MainWindow.go
+				UnhideButtons()
 				HideModal()
 			} else {
 				dialog.ShowError(errors.New("Project Exists"), GetWindow())
@@ -127,6 +133,7 @@ func createNewProjectForm() *widget.Form {
 		}
 	}
 	newProjectForm.OnCancel = func() {
+		// HideModal() in MainWindow.go
 		HideModal()
 	}
 	return newProjectForm

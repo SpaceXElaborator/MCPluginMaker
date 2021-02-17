@@ -10,10 +10,12 @@ import (
 )
 
 var (
+	// Create the global variables needed
 	modal *widget.PopUp
 	a fyne.App = app.New()
 	w fyne.Window = a.NewWindow("MCPluginMaker | " + GetAuthor() + " | Project: " + CWP)
 	
+	// -------------- Buttons --------------
 	addCmdButt = widget.NewButton("Add Command", func() {
 		commandForm := createCommandForm()
 		modal = widget.NewModalPopUp(commandForm, w.Canvas())
@@ -25,7 +27,9 @@ var (
 		proj := GetProject(CWP)
 		build(proj)
 	})
+	// -------------------------------------
 	
+	// List of all Projects that will show on the left side of the screen
 	list = widget.NewList(
 		func() int {
 			return len(PluginProjects)
@@ -39,6 +43,7 @@ var (
 	)
 )
 
+// Create the top bar for creating projects, deleting projects, and the settings
 func createToolbar() *widget.Toolbar {
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.FolderNewIcon(), func() {
@@ -58,6 +63,7 @@ func createToolbar() *widget.Toolbar {
 	return toolbar
 }
 
+// Create the offical GUI using Fyne
 func ShowMainMenu() {
 	HideButtons()
 	
@@ -87,16 +93,19 @@ func ShowMainMenu() {
 	w.ShowAndRun()
 }
 
+// A function to quickly disable all buttons
 func HideButtons() {
 	addCmdButt.Disable()
 	addBuildButt.Disable()
 }
 
+// A function to quickly enable all buttons
 func UnhideButtons() {
 	addCmdButt.Enable()
 	addBuildButt.Enable()
 }
 
+// Get the current modal being displayed and hide it if it isn't
 func HideModal() {
 	modal.Hide()
 }

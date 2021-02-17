@@ -4,8 +4,6 @@ import (
 	"io/ioutil"
 	"os"
 	"encoding/json"
-	"fmt"
-	"log"
 	"regexp"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
@@ -21,6 +19,7 @@ func createDirs() {
 	os.MkdirAll("projects", os.ModePerm)
 }
 
+// Made to be sure that settings are saved when closing/reopening the application
 func Save() {
 	data := Settings {
 		Author: GetAuthor(),
@@ -33,6 +32,8 @@ func Save() {
 
 func initSettings() {
 	createDirs()
+	
+	// Read from the .json settings file and set the variables
 	settingsFile, err := os.Open("settings.json")
 	defer settingsFile.Close()
 	if err != nil {
@@ -44,11 +45,15 @@ func initSettings() {
 	dark = set.Dark
 	author = set.Author
 	
+	// Reset the title so it reflects the author and set the theme based on the settings
+	// GetWindow() in MainWindow.go
 	GetWindow().SetTitle("MCPluginMaker | " + GetAuthor() + " | Project: " + CWP)
 	
 	if dark == true {
+		// GetApp() in MainWindow.go
 		GetApp().Settings().SetTheme(theme.DarkTheme())
 	} else {
+		// GetApp() in MainWindow.go
 		GetApp().Settings().SetTheme(theme.LightTheme())
 	}
 	
@@ -56,11 +61,15 @@ func initSettings() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	
+	// Read every folder in the /projects folder to reload projects made
 	for _, f := range projects {
 		content, err := ioutil.ReadFile("./projects/" + f.Name() + "/pom.xml")
 		if err != nil {
 			log.Fatal(err)
 		}
+		
+		// Get the pom.xml and use Regex to load the projects and create new Project strucs to save
 		pomString := string(content)
 		group := regexp.MustCompile(`<groupId>(.*)</groupId>`)
 		artifact := regexp.MustCompile(`<artifactId>(.*)</artifactId>`)
@@ -69,8 +78,8 @@ func initSettings() {
 		artifactId := artifact.FindStringSubmatch(pomString)
 		descriptionField := description.FindStringSubmatch(pomString)
 		newProj := Project{f.Name(), GetAuthor(), groupId[1], artifactId[1], descriptionField[1], []Command{}}
-		fmt.Println("Found project: ", f.Name())
 		
+		// Check if there are any commands that needs to be loaded
 		cmds, err := ioutil.ReadDir("./projects/" + f.Name() + "/src/main/java/com/" + GetAuthor() + "/net/cmds")
 		if err == nil {
 			for _, cmd := range cmds {
@@ -82,10 +91,8 @@ func initSettings() {
 				slashCmd := regexp.MustCompile(`if\(label.equalsIgnoreCase\("(.*)"\)\)`)
 				slashString := slashCmd.FindStringSubmatch(cmdString)
 				if slashString == nil {
-					log.Print("It's empty: " + cmd.Name())
 					continue
 				}
-				log.Print("Found Command: " + cmd.Name())
 				newProj.Cmds = append(newProj.Cmds, Command{GetAuthor(), cmd.Name()[0:len(cmd.Name()) - 5], slashString[1]})
 			}
 		}
@@ -97,9 +104,11 @@ func initSettings() {
 func createSettingsForm() *widget.Form {
 	themeCheck := widget.NewCheck("", func(on bool) {
 			if on == true {
+				// GetApp() in MainWindow.go
 				GetApp().Settings().SetTheme(theme.DarkTheme())
 				dark = true
 			} else {
+				// GetApp() in MainWindow.go
 				GetApp().Settings().SetTheme(theme.LightTheme())
 				dark = false
 			}
@@ -122,13 +131,16 @@ func createSettingsForm() *widget.Form {
 	newSettingsForm.OnSubmit = func() {
 		if authorNameEntry.Text != "" {
 			author = authorNameEntry.Text
+			// GetWindow() in MainWindow.go
 			GetWindow().SetTitle("MCPluginMaker | " + author + " Project: " + CWP)
 		} else {
 			author = "User"
 		}
+		// HideModal() in MainWindow.go
 		HideModal()
 	}
 	newSettingsForm.OnCancel = func() {
+		// HideModal() in MainWindow.go
 		HideModal()
 	}
 	return newSettingsForm

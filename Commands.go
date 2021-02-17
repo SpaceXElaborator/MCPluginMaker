@@ -11,11 +11,11 @@ import (
 	"fyne.io/fyne/v2/dialog"
 )
 
+// Check if name is the same as another command
 func CommandExist(cmd Command) bool {
 	proj := GetProject(CWP)
 	cmdName := strings.ToLower(cmd.Name)
 	for _, f := range proj.Cmds {
-		log.Print("Command Found in " + proj.Name + ": ", f.Name)
 		if strings.ToLower(f.Name) == cmdName {
 			return true
 		}
@@ -23,6 +23,7 @@ func CommandExist(cmd Command) bool {
 	return false
 }
 
+// Check if the /{cmd} is the same as another command
 func SlashExists(cmd Command) bool { 
 	proj := GetProject(CWP)
 	slashString := strings.ToLower(cmd.SlashCommand)
@@ -34,6 +35,7 @@ func SlashExists(cmd Command) bool {
 	return false
 }
 
+// Create the form the user will input information into
 func createCommandForm() *widget.Form {
 	commandNameEntry := widget.NewEntry()
 	commandNameEntry.Resize(fyne.NewSize(300, 300))
@@ -58,23 +60,31 @@ func createCommandForm() *widget.Form {
 			if(CommandExist(cmd) != true) {
 				if(SlashExists(cmd) != true) {
 					createCommand(cmd)
+					
+					// HideModal() in MainWindow.go
 					HideModal()
 				} else {
+					// GetWindow() in MainWindow.go
 					dialog.ShowError(errors.New("SlashCommand Exists"), GetWindow())
 				}
 			} else {
+				// GetWindow() in MainWindow.go
 				dialog.ShowError(errors.New("Command Exists"), GetWindow())
 			}
 		}
 	}
 	newCommandForm.OnCancel = func() {
+		// HideModal() in MainWindow.go
 		HideModal()
 	}
 	return newCommandForm
 }
 
 func createCommand(cmd Command) {
+	Create parent directors if they aren't present using the current mode permission of the user
 	os.MkdirAll("projects/" + CWP + "/src/main/java/com/terturl/net/cmds", os.ModePerm)
+	
+	// GetProject() in Main.go
 	proj := GetProject(CWP)
 	proj.Cmds = append(proj.Cmds, cmd)
 	
@@ -87,10 +97,7 @@ func createCommand(cmd Command) {
 	}
 	PluginProjects[index] = *proj
 	
-	for _, cmd := range proj.Cmds {
-		log.Print("Command: ", cmd.Name)
-	}
-	
+	// Create the Java file for editing using the template below
 	f, err := os.Create("projects/" + CWP + "/src/main/java/com/terturl/net/cmds/" + cmd.Name + ".java")
 	if err != nil {
 		log.Print("Error: ", err)

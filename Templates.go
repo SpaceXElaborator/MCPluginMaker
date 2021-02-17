@@ -1,6 +1,8 @@
 package main
 
 var (
+// The Main.java that needs to catch and set the executor classes of all commands
+// and soon will add support for listening on listeners
 mainJavaTmpl = `package com.{{.Author}}.net;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +19,7 @@ public class Main extends JavaPlugin {
 }
 `
 
+// Create commands that will here soon have more functionality
 cmdJavaTmpl = `package com.{{.Author}}.net.cmds;
 
 import org.bukkit.command.Command;
@@ -36,7 +39,8 @@ public class {{.Name}} implements CommandExecutor {
 	
 }
 `
-
+// Create the plugin.yml using authors names, commands, and the plugin name
+// to be able to read the plugin when built
 pluginYmlTmpl = `main: com.{{.Author}}.net.Main
 name: {{.Name}}
 author: {{.Author}}

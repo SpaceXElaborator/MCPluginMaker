@@ -4,17 +4,7 @@ var (
 	PluginProjects []Project
 )
 
-func Test() {
-	// ------------- Test One -------------
-	//createNewProject("test", PomXML{"terturl", "test", "Test", "Test", "This is a test"})
-	//createCommand(Command{GetAuthor(), "HealCommand", "Heal"})
-	//createCommand(Command{GetAuthor(), "TeleportCommand", "Teleport"})
-	//createCommand(Command{GetAuthor(), "KillCommand", "Kill"})
-	//createCommand(Command{GetAuthor(), "PrintSoureCode", "psc"})
-	//build()
-	// -------------------------------------
-}
-
+// Returns a pointer to a Project given the name
 func GetProject(name string) *Project {
 	for _, f := range PluginProjects {
 		if f.Name == name {
@@ -24,6 +14,7 @@ func GetProject(name string) *Project {
 	return nil
 }
 
+// Only checks if the project actually exists (Subject to removal)
 func ProjectExists(name string) bool {
 	for _, f := range PluginProjects {
 		if f.Name == name {
@@ -34,10 +25,13 @@ func ProjectExists(name string) bool {
 }
 
 func main() {
+	// initSettings()/createDirs() in Settings.go
 	initSettings()
-	// Testing Only
-	Test()
 	createDirs()
+	
+	// ShowMainMenu() in MainWindow.go
 	ShowMainMenu()
+	
+	// Save() in Settings.go
 	Save()
 }
