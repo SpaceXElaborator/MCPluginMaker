@@ -12,6 +12,12 @@ the program will stop you from trying to create new commands with the same name/
 1. Basic player commands (I.E /heal, /feed, /kill type commands)
 2. Basic target player commands (I.E /heal {player}, feed {player}, kill {player})
 3. Add permissions (optional)
+## Crafting
+Crafting hasn't been added yet, but will be an easy add when I get around to it.
+### Features to Come
+1. Crafting table crafting (Shaped and Unshaped)
+2. Furnace crafting
+3. Look into custom crafting with chests?
 ## Listeners
 Listeners haven't been added as of yet. They will be added very shortly
 ### Features to Come
