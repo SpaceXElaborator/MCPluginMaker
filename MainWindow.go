@@ -51,19 +51,37 @@ var (
 	)
 )
 
+func createCmdToolbar() *widget.Toolbar {
+	toolbar := widget.NewToolbar(
+		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
+			commandForm := createCommandForm()
+			modal = widget.NewModalPopUp(widget.NewCard("Add Command", "", commandForm), w.Canvas())
+			modal.Resize(fyne.NewSize(512, 0))
+			modal.Show()
+		}),
+		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
+			commandForm := removeCommand()
+			modal = widget.NewModalPopUp(widget.NewCard("Remove Command", "", commandForm), w.Canvas())
+			modal.Resize(fyne.NewSize(512, 0))
+			modal.Show()
+		}),
+	)
+	return toolbar
+}
+
 // Create the top bar for creating projects, deleting projects, and the settings
 func createToolbar() *widget.Toolbar {
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.FolderNewIcon(), func() {
 			newProjectForm := createNewProjectForm()
-			modal = widget.NewModalPopUp(newProjectForm, w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard("New Project", "", newProjectForm), w.Canvas())
 			modal.Resize(fyne.NewSize(512, 0))
 			modal.Show()
 		}),
 		widget.NewToolbarSpacer(),
 		widget.NewToolbarAction(theme.SettingsIcon(), func() {
 			settingsForm := createSettingsForm()
-			modal = widget.NewModalPopUp(settingsForm, w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard("Settings", "", settingsForm), w.Canvas())
 			modal.Resize(fyne.NewSize(512, 0))
 			modal.Show()
 		}),
@@ -112,15 +130,21 @@ func SetNewContent() {
 
 	var apps fyne.CanvasObject
 
-	
-
 	if len(GetProject(CWP).CmdRows) >= 1 {
 		apps = container.NewAppTabs(
-			container.NewTabItem("Commands", container.NewMax(addCmdButt, CreateCommandBlocks())),
+			container.NewTabItem("Commands", 
+				container.NewBorder(
+					createCmdToolbar(),
+					nil,
+					nil,
+					nil,
+					container.NewMax(CreateCommandBlocks()),
+				),
+			),
 		)
 	} else {
 		apps = container.NewAppTabs(
-			container.NewTabItem("Commands", container.NewMax(addCmdButt, widget.NewLabel("Create A Command To View This"))),
+			container.NewTabItem("Commands", container.NewMax(widget.NewLabel("Create A Command To View This"))),
 		)
 	}
 	
