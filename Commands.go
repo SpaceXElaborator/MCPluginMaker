@@ -86,8 +86,10 @@ func removeCommand() *widget.Form {
 		CmdNames = append(CmdNames, f.Name)
 	}
 	
-	commandNameEntry := widget.NewSelect(CmdNames, func(string) {
-		return
+	cmdToRem := ""
+	
+	commandNameEntry := widget.NewSelect(CmdNames, func(s string) {
+		cmdToRem = s
 	})
 	commandNameFormItem := &widget.FormItem {
 		Text: "Command Name",
@@ -96,7 +98,19 @@ func removeCommand() *widget.Form {
 	
 	remCommandForm := widget.NewForm(commandNameFormItem)
 	remCommandForm.OnSubmit = func() {
-		HideModal()
+		if cmdToRem != "" {
+			var index int
+			for i, f := range GetProject(CWP).Cmds {
+				if f.Name == cmdToRem {
+					index = i
+					break
+				}
+			}
+			GetProject(CWP).Cmds = append(GetProject(CWP).Cmds[:index], GetProject(CWP).Cmds[index+1:]...)
+			os.Remove("projects/" + CWP + "/src/main/java/com/terturl/net/cmds/" + cmdToRem + ".java")
+			SetNewContent()
+			HideModal()
+		}
 	}
 	
 	remCommandForm.OnCancel = func() {
@@ -134,4 +148,5 @@ func createCommand(cmd Command) {
 		log.Print("Error: ", err)
 	}
 	f.Close()
+	SetNewContent()
 }
