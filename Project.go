@@ -21,7 +21,7 @@ func createNewProject(name string, xml PomXML) {
 	os.MkdirAll("projects/" + name + "/src/main/java/com/" + GetAuthor() + "/net", os.ModePerm)
 	GetWindow().SetTitle("MCPluginMaker | " + GetAuthor() + " | Project: " + CWP)
 	createPom(xml)
-	proj := Project{CWP, GetAuthor(), xml.GroupID, xml.ArtifactID, xml.Description, []Command{}, []CmdRow{}, []CustomItem{}}
+	proj := Project{CWP, GetAuthor(), xml.GroupID, xml.ArtifactID, xml.Description, []Command{}, []CustomItem{}}
 	PluginProjects = append(PluginProjects, proj)
 	list.Refresh()
 }
@@ -143,8 +143,7 @@ func createNewProjectForm() *widget.Form {
 				xml := PomXML{GetAuthor(), CWP, projectGroupEntry.Text, projectArtifactEntry.Text, projectDescriptionEntry.Text}
 				createNewProject(projectNameEntry.Text, xml)
 				
-				// HideModal()/UnhideButtons() in MainWindow.go
-				UnhideButtons()
+				// HideModal() in MainWindow.go
 				HideModal()
 			} else {
 				dialog.ShowError(errors.New("Project Exists"), GetWindow())
