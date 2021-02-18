@@ -28,9 +28,14 @@ type PomXML struct {
 	Author, Name, GroupID, ArtifactID, Description string
 }
 
+type CmdRow struct {
+	Cmds []Command
+}
+
 type Project struct {
 	Name, Author string
 	GroupID, ArtifactID, Description string
 	Cmds []Command
+	CmdRows []CmdRow
 	Items []CustomItem
 }
