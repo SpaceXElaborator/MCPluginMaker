@@ -12,7 +12,7 @@ import (
 var (
 	// Create the global variables needed
 	modal *widget.PopUp
-	a fyne.App = app.New()
+	a fyne.App = app.NewWithID("MCPluginMaker")
 	w fyne.Window = a.NewWindow("MCPluginMaker | " + GetAuthor())
 	
 	// -------------- Buttons --------------
@@ -21,11 +21,6 @@ var (
 		modal = widget.NewModalPopUp(itemForm, w.Canvas())
 		modal.Resize(fyne.NewSize(512, 0))
 		modal.Show()
-	})
-	
-	addBuildButt = widget.NewButton("Build Project", func() {
-		proj := GetProject(CWP)
-		build(proj)
 	})
 	// -------------------------------------
 	
@@ -69,6 +64,16 @@ func createToolbar() *widget.Toolbar {
 			modal = widget.NewModalPopUp(widget.NewCard("New Project", "", newProjectForm), w.Canvas())
 			modal.Resize(fyne.NewSize(512, 0))
 			modal.Show()
+		}),
+		widget.NewToolbarAction(theme.DeleteIcon(), func() {
+			delProjectForm := delProjectForm()
+			modal = widget.NewModalPopUp(widget.NewCard("Remove Project", "", delProjectForm), w.Canvas())
+			modal.Resize(fyne.NewSize(512, 0))
+			modal.Show()
+		}),
+		widget.NewToolbarAction(theme.DocumentSaveIcon(), func() {
+			proj := GetProject(CWP)
+			build(proj)
 		}),
 		widget.NewToolbarSpacer(),
 		widget.NewToolbarAction(theme.SettingsIcon(), func() {
