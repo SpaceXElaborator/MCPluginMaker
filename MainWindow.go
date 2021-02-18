@@ -12,8 +12,9 @@ import (
 var (
 	// Create the global variables needed
 	modal *widget.PopUp
+	secondModal *widget.PopUp
 	a fyne.App = app.New()
-	w fyne.Window = a.NewWindow("MCPluginMaker | " + GetAuthor() + " | Project: " + CWP)
+	w fyne.Window = a.NewWindow("MCPluginMaker | " + GetAuthor())
 	
 	// -------------- Buttons --------------
 	addCmdButt = widget.NewButton("Add Command", func() {
@@ -74,20 +75,19 @@ func createToolbar() *widget.Toolbar {
 func ShowMainMenu() {
 	HideButtons()
 	
-	list.OnSelected = func(id widget.ListItemID) {
-		CWP = PluginProjects[id].Name
-		w.SetTitle("MCPluginMaker | " + GetAuthor() + " | Project: " + CWP)
-		UnhideButtons()
-	}
-	
-	mainCenter := container.NewVBox(
+	/*mainCenter := container.NewVBox(
 			addCmdButt,
 			addItemButt,
 			addBuildButt,
-	)
+	)*/
+	
 	toolbar := createToolbar()
-	split := container.NewHSplit(list, mainCenter)
+	
+	split := container.NewHSplit(list, container.NewVBox(
+			widget.NewLabel("Please Select A Project Or Create A New One"),
+		))
 	split.Offset = 0.1
+	
 	c := container.NewBorder(
 		toolbar,
 		nil,
@@ -96,9 +96,93 @@ func ShowMainMenu() {
 		split,
 	)
 	
+	list.OnSelected = func(id widget.ListItemID) {
+		CWP = PluginProjects[id].Name
+		w.SetTitle("MCPluginMaker | " + GetAuthor())
+		UnhideButtons()
+		SetNewContent()
+	}
+	
 	w.Resize(fyne.NewSize(1024, 768))
 	w.SetContent(c)
 	w.ShowAndRun()
+}
+
+func SetNewContent() {
+
+	var apps fyne.CanvasObject
+
+	
+
+	if len(GetProject(CWP).CmdRows) >= 1 {
+		apps = container.NewAppTabs(
+			container.NewTabItem("Commands", container.NewMax(addCmdButt, CreateCommandBlocks())),
+		)
+	} else {
+		apps = container.NewAppTabs(
+			container.NewTabItem("Commands", container.NewMax(addCmdButt, widget.NewLabel("Create A Command To View This"))),
+		)
+	}
+	
+	card := widget.NewCard("Project: " + CWP, "", apps)
+	
+	toolbar := createToolbar()
+	split := container.NewHSplit(list, card)
+	split.Offset = 0.1
+	
+	c := container.NewBorder(
+		toolbar,
+		nil,
+		nil,
+		nil,
+		split,
+	)
+	
+	w.SetContent(c)
+}
+
+func CreateCommandBlocks() *widget.Table {
+	proj := GetProject(CWP)
+	cmdRows := proj.CmdRows
+	cmdLength := len(cmdRows[len(cmdRows) - 1].Cmds)
+	dmyCmd := Command{"", "", ""}
+	if cmdLength == 1 {
+		cmdRows[len(cmdRows) - 1].Cmds = append(cmdRows[len(cmdRows) - 1].Cmds, dmyCmd, dmyCmd)
+	}
+	if cmdLength == 2 {
+		cmdRows[len(cmdRows) - 1].Cmds = append(cmdRows[len(cmdRows) - 1].Cmds, dmyCmd)
+	}
+	table := widget.NewTable(
+		func() (int, int) {
+			return len(cmdRows), 3
+		},
+		func() fyne.CanvasObject {
+			name := widget.NewLabelWithStyle("Name Text", fyne.TextAlignCenter, fyne.TextStyle{})
+			sep := widget.NewSeparator()
+			flavor := widget.NewLabel("Flavor Text")
+			
+			con := container.NewVBox(
+				name,
+				sep,
+				flavor,
+			)
+			return con
+		},
+		func(tci widget.TableCellID, f fyne.CanvasObject) {
+			f.(*fyne.Container).Objects[0].(*widget.Label).SetText(cmdRows[tci.Row].Cmds[tci.Col].Name)
+			if cmdRows[tci.Row].Cmds[tci.Col].SlashCommand == "" {
+				f.(*fyne.Container).Objects[2].(*widget.Label).SetText("")
+			} else {
+				f.(*fyne.Container).Objects[2].(*widget.Label).SetText("/" + cmdRows[tci.Row].Cmds[tci.Col].SlashCommand)
+			}
+			
+		})
+	
+	table.SetColumnWidth(0, 270)
+	table.SetColumnWidth(1, 270)
+	table.SetColumnWidth(2, 270)
+	
+	return table
 }
 
 // A function to quickly disable all buttons
@@ -118,6 +202,10 @@ func UnhideButtons() {
 // Get the current modal being displayed and hide it if it isn't
 func HideModal() {
 	modal.Hide()
+}
+
+func HideModal2() {
+	secondModal.Hide()
 }
 
 func GetApp() fyne.App {
