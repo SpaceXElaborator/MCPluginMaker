@@ -21,7 +21,7 @@ func createNewProject(name string, xml PomXML) {
 	os.MkdirAll("projects/" + name + "/src/main/java/com/" + GetAuthor() + "/net", os.ModePerm)
 	GetWindow().SetTitle("MCPluginMaker | " + GetAuthor() + " | Project: " + CWP)
 	createPom(xml)
-	proj := Project{CWP, GetAuthor(), xml.GroupID, xml.ArtifactID, xml.Description, []Command{}, []CustomItem{}}
+	proj := Project{CWP, GetAuthor(), xml.GroupID, xml.ArtifactID, xml.Description, []Command{}, []CmdRow{}, []CustomItem{}}
 	PluginProjects = append(PluginProjects, proj)
 	list.Refresh()
 }
