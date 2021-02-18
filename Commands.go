@@ -80,6 +80,32 @@ func createCommandForm() *widget.Form {
 	return newCommandForm
 }
 
+func removeCommand() *widget.Form {
+	CmdNames := []string{}
+	for _, f := range GetProject(CWP).Cmds {
+		CmdNames = append(CmdNames, f.Name)
+	}
+	
+	commandNameEntry := widget.NewSelect(CmdNames, func(string) {
+		return
+	})
+	commandNameFormItem := &widget.FormItem {
+		Text: "Command Name",
+		Widget: commandNameEntry,
+	}
+	
+	remCommandForm := widget.NewForm(commandNameFormItem)
+	remCommandForm.OnSubmit = func() {
+		HideModal()
+	}
+	
+	remCommandForm.OnCancel = func() {
+		HideModal()
+	}
+	
+	return remCommandForm
+}
+
 func createCommand(cmd Command) {
 	// Create parent directors if they aren't present using the current mode permission of the user
 	os.MkdirAll("projects/" + CWP + "/src/main/java/com/terturl/net/cmds", os.ModePerm)
