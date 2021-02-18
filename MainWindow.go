@@ -121,6 +121,24 @@ func SetNewContent() {
 				CreateCommandBlocksTest(),
 			),
 		),
+		container.NewTabItem("Listeners", 
+			container.NewBorder(
+				createCmdToolbar(),
+				nil,
+				nil,
+				nil,
+				CreateCommandBlocksTest(),
+			),
+		),
+		container.NewTabItem("Items", 
+			container.NewBorder(
+				createCmdToolbar(),
+				nil,
+				nil,
+				nil,
+				CreateCommandBlocksTest(),
+			),
+		),
 	)
 	
 	card := widget.NewCard("Project: " + CWP, "", apps)
