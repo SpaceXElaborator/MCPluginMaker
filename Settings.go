@@ -78,7 +78,7 @@ func initSettings() {
 		groupId := group.FindStringSubmatch(pomString)
 		artifactId := artifact.FindStringSubmatch(pomString)
 		descriptionField := description.FindStringSubmatch(pomString)
-		newProj := Project{f.Name(), GetAuthor(), groupId[1], artifactId[1], descriptionField[1], []Command{}, []CustomItem{}}
+		newProj := Project{f.Name(), GetAuthor(), groupId[1], artifactId[1], descriptionField[1], []Command{}, []CmdRow{}, []CustomItem{}}
 		
 		// Check if there are any commands that needs to be loaded
 		cmds, err := ioutil.ReadDir("./projects/" + f.Name() + "/src/main/java/com/" + GetAuthor() + "/net/cmds")
@@ -94,7 +94,23 @@ func initSettings() {
 				if slashString == nil {
 					continue
 				}
-				newProj.Cmds = append(newProj.Cmds, Command{GetAuthor(), cmd.Name()[0:len(cmd.Name()) - 5], slashString[1]})
+				
+				cmd := Command{GetAuthor(), cmd.Name()[0:len(cmd.Name()) - 5], slashString[1]}
+				
+				// Test Commands row
+				if len(newProj.CmdRows) == 0 {
+					newProj.CmdRows = append(newProj.CmdRows, CmdRow{[]Command{cmd}})
+				} else {
+					if len(newProj.CmdRows[len(newProj.CmdRows) - 1].Cmds) <= 2 {
+						lastList := newProj.CmdRows[len(newProj.CmdRows) - 1]
+						lastList.Cmds = append(lastList.Cmds, cmd)
+						newProj.CmdRows[len(newProj.CmdRows) - 1] = lastList
+					} else {
+						newProj.CmdRows = append(newProj.CmdRows, CmdRow{[]Command{cmd}})
+					}
+				}
+				
+				newProj.Cmds = append(newProj.Cmds, cmd)
 			}
 		}
 		

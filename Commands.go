@@ -88,6 +88,19 @@ func createCommand(cmd Command) {
 	proj := GetProject(CWP)
 	proj.Cmds = append(proj.Cmds, cmd)
 	
+	// Setting up table to show all commands
+	if len(proj.CmdRows) == 0 {
+		proj.CmdRows = append(proj.CmdRows, CmdRow{[]Command{cmd}})
+	} else {
+		if len(proj.CmdRows[len(proj.CmdRows) - 1].Cmds) <= 2 {
+			lastList := proj.CmdRows[len(proj.CmdRows) - 1]
+			lastList.Cmds = append(lastList.Cmds, cmd)
+			proj.CmdRows[len(proj.CmdRows) - 1] = lastList
+		} else {
+			proj.CmdRows = append(proj.CmdRows, CmdRow{[]Command{cmd}})
+		}
+	}
+	
 	// Reset the project to be the new proj pointer
 	var index int
 	for i, cmd := range PluginProjects {
