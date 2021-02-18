@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os/exec"
 	"text/template"
+	"path/filepath"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 	"fyne.io/fyne/v2/dialog"
@@ -14,6 +15,70 @@ import (
 var (
 	CWP string
 )
+
+func delProjectForm() *widget.Form {
+	
+	ProjNames := []string{}
+	for _, f := range PluginProjects {
+		ProjNames = append(ProjNames, f.Name)
+	}
+	
+	ProjName := ""
+	
+	projNameEntry := widget.NewSelect(ProjNames, func(s string) {
+		ProjName = s
+	})
+	projNameFormItem := &widget.FormItem {
+		Text: "Project Name",
+		Widget: projNameEntry,
+	}
+	
+	remCommandForm := widget.NewForm(projNameFormItem)
+	remCommandForm.OnSubmit = func() {
+		if ProjName != "" {
+			var index int
+			for i, f := range PluginProjects {
+				if f.Name == ProjName {
+					index = i
+					break
+				}
+			}
+			RemoveProject(ProjName)
+			PluginProjects = append(PluginProjects[:index], PluginProjects[index+1:]...)
+			list.Refresh()
+			HideModal()
+		}
+	}
+	
+	remCommandForm.OnCancel = func() {
+		HideModal()
+	}
+	
+	return remCommandForm
+	
+}
+
+func RemoveProject(name string) {
+	d, err := os.Open("./projects/" + name)
+	if err != nil {
+		log.Fatal(err)
+	}
+	names, err := d.Readdirnames(-1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, fName := range names {
+		err = os.RemoveAll(filepath.Join("./projects/" + name, fName))
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	d.Close()
+	err = os.Remove("./projects/" + name)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 // Create a new project with the given name and XML file, reset the name of the window,
 // 		and refresh the plugin list so it shows on the sidebar menu in the GUI
@@ -94,11 +159,14 @@ func build(proj *Project) {
 	
 	mvnCmd := exec.Command("mvn", "-f", "./projects/" + CWP + "/pom.xml", "package")
 	mvnCmd.Dir = "."
-	output, err := mvnCmd.Output()
+	_, err := mvnCmd.Output()
 	if err != nil {
 		log.Print(err)
 	}
-	log.Print(output)
+	fyne.CurrentApp().SendNotification(&fyne.Notification{
+		Title:   "Build Complete",
+		Content: "Building of " + CWP + " complete",
+	})
 }
 
 func createNewProjectForm() *widget.Form {
