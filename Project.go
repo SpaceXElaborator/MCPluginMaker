@@ -152,6 +152,7 @@ func createItemClass(proj *Project) {
 func build(proj *Project) {
 	createYaml(proj)
 	createMainJava(proj)
+	buildCommands(proj)
 	
 	if len(proj.Items) > 0 {
 		createItemClass(proj)
