@@ -2,7 +2,6 @@ package main
 
 import (
 	"strings"
-	"log"
 	"errors"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
