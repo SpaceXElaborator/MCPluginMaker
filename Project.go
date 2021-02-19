@@ -135,7 +135,7 @@ func createMainJava(proj *Project) {
 }
 
 func createItemClass(proj *Project) {
-	f, err := os.Create("projects/" + CWP + "/src/main/java/com/terturl/net/" + proj.Name + "CustomItems" + ".java")
+	f, err := os.Create("projects/" + CWP + "/src/main/java/com/terturl/net/" + proj.Name + "CustomItems.java")
 	if err != nil {
 		log.Print("Error: ", err)
 	}
