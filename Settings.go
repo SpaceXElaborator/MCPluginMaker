@@ -6,6 +6,7 @@ import (
 	"log"
 	"encoding/json"
 	"regexp"
+	"strings"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 	"fyne.io/fyne/v2/theme"
@@ -80,6 +81,31 @@ func initSettings() {
 		descriptionField := description.FindStringSubmatch(pomString)
 		newProj := Project{f.Name(), GetAuthor(), groupId[1], artifactId[1], descriptionField[1], []Command{}, []CustomItem{}}
 		
+		_, err = os.Stat("./projects/" + f.Name() + "/src/main/java/com/" + GetAuthor() + "/net/" + f.Name() + "CustomItems.java")
+		if err == nil {
+			content, err := ioutil.ReadFile("./projects/" + f.Name() + "/src/main/java/com/" + GetAuthor() + "/net/" + f.Name() + "CustomItems.java")
+			if err != nil {
+				log.Fatal(err)
+			}
+			itemsString := string(content)
+			itemsRegString := regexp.MustCompile(`<<ITEM:(.*)>>`)
+			itemsInFile := itemsRegString.FindAllStringSubmatch(itemsString, -1)
+			for _, v := range itemsInFile {
+				itemMakerString := strings.Split(v[1], "||")
+				var tmp []string
+				for _, strs := range strings.Split(itemMakerString[2], `\n`) {
+					if strs == "\n" || strs == "" {
+						continue
+					}
+					tmp = append(tmp, strings.TrimRight(strs, "\n"))
+				}
+				newItem := CustomItem{GetAuthor(), itemMakerString[0], itemMakerString[1], tmp}
+				newProj.Items = append(newProj.Items, newItem)
+			}
+		} else {
+			log.Print(err)
+		}
+		
 		// Check if there are any commands that needs to be loaded
 		cmds, err := ioutil.ReadDir("./projects/" + f.Name() + "/src/main/java/com/" + GetAuthor() + "/net/cmds")
 		if err == nil {
@@ -90,12 +116,17 @@ func initSettings() {
 				}
 				cmdString := string(content)
 				slashCmd := regexp.MustCompile(`if\(label.equalsIgnoreCase\("(.*)"\)\)`)
+				cmdType := regexp.MustCompile(`<<CMDTYPE:(.*)>>`)
 				slashString := slashCmd.FindStringSubmatch(cmdString)
+				cmdTypeField := cmdType.FindStringSubmatch(cmdString)
 				if slashString == nil {
 					continue
 				}
+				if cmdTypeField == nil {
+					continue
+				}
 				
-				cmd := Command{GetAuthor(), cmd.Name()[0:len(cmd.Name()) - 5], slashString[1]}
+				cmd := Command{GetAuthor(), cmdTypeField[1], cmd.Name()[0:len(cmd.Name()) - 5], slashString[1]}
 				newProj.Cmds = append(newProj.Cmds, cmd)
 			}
 		}
