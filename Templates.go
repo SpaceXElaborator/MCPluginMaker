@@ -43,6 +43,7 @@ public class {{.Name}}CustomItems {
 	
 	public static void RegisterItems() {
 		{{with .Items -}}{{range $val := .}}
+		// <<ITEM:{{$val.ItemMaterial}}||{{$val.ItemName}}||{{with $val.ItemDescription -}}{{range $strings := .}}{{.}}\n{{end}}{{end}}>>
 		ItemStack {{$val.ItemName}}Item = new ItemStack(Material.valueOf("{{$val.ItemMaterial}}"));
 		ItemMeta {{$val.ItemName}}Meta = {{$val.ItemName}}Item.getItemMeta();
 		{{$val.ItemName}}Meta.setDisplayName("{{$val.ItemName}}");
@@ -79,6 +80,7 @@ public class {{.Name}} implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
+		// <<TYPE:{{.CommandType}}>>
 		if(label.equalsIgnoreCase("{{.SlashCommand}}")) {
 			
 		}
