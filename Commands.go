@@ -68,7 +68,7 @@ func createCommandForm() *widget.Form {
 	newCommandForm.OnSubmit = func() {
 		if CommandType != "" && commandNameEntry.Text != "" && slashStringEntry.Text != "" {
 			cmd := Command{GetAuthor(), CommandType, commandNameEntry.Text, slashStringEntry.Text}
-			if(CommandExist(cmd) != true) {
+			if CommandExist(cmd) != true {
 				if(SlashExists(cmd) != true) {
 					createCommand(cmd)
 					// HideModal() in MainWindow.go
