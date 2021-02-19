@@ -170,10 +170,31 @@ func CreateCommandBlocks() fyne.CanvasObject {
 	var test []fyne.CanvasObject
 	
 	for _, f := range GetProject(CWP).Cmds {
+		
+		toolbar := widget.NewToolbar(
+			widget.NewToolbarAction(theme.ContentAddIcon(), func() {
+				
+			}),
+			widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
+				
+			}),
+		)
+		
+		var accItems []*widget.AccordionItem
+		
+		max := container.NewBorder(
+			toolbar,
+			nil,
+			nil,
+			nil,
+			container.NewVScroll(
+				widget.NewAccordion(
+					accItems...
+				),
+			),
+		)
 	
-		cont := widget.NewCard("", "Functions", container.NewVScroll(widget.NewAccordion(
-			widget.NewAccordionItem("Test", widget.NewLabel("Test")),
-		)))
+		cont := widget.NewCard("", "Functions", max)
 		
 		card := widget.NewCard(
 			f.CommandType + " Command",
