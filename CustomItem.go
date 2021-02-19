@@ -45,11 +45,6 @@ func customItemForm() *widget.Form {
 		Widget: itemDescEntry,
 	}
 
-	//itemTestFormItem := &widget.FormItem {
-	//	Text: "Crafting Recipe",
-	//	Widget: MakeTable(),
-	//}
-
 	newCustomItemForm := widget.NewForm(itemNameFormItem, itemMaterialFormItem, itemDescFormItem)
 	newCustomItemForm.OnSubmit = func() {
 		if itemNameEntry.Text != "" && itemMaterialEntry.Text != "" {
@@ -87,26 +82,4 @@ func customItemForm() *widget.Form {
 		HideModal()
 	}
 	return newCustomItemForm
-}
-
-// Setting up for Crafting
-func MakeTable() *widget.Table {
-	table := widget.NewTable(
-		func() (int,int) {
-			return 3,3
-		},
-		func() fyne.CanvasObject {
-			label := widget.NewEntry()
-			return label
-		},
-		func(tci widget.TableCellID, f fyne.CanvasObject) {
-			
-		})
-	table.SetColumnWidth(0, 100)
-	table.SetColumnWidth(1, 100)
-	table.SetColumnWidth(2, 100)
-	table.OnSelected = func(id widget.TableCellID) {
-		log.Print(id)
-	}
-	return table
 }
