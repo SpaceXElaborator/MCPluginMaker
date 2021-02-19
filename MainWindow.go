@@ -15,15 +15,6 @@ var (
 	a fyne.App = app.NewWithID("MCPluginMaker")
 	w fyne.Window = a.NewWindow("MCPluginMaker | " + GetAuthor())
 	
-	// -------------- Buttons --------------
-	addItemButt = widget.NewButton("Add Item", func() {
-		itemForm := customItemForm()
-		modal = widget.NewModalPopUp(itemForm, w.Canvas())
-		modal.Resize(fyne.NewSize(512, 0))
-		modal.Show()
-	})
-	// -------------------------------------
-	
 	// List of all Projects that will show on the left side of the screen
 	list = widget.NewList(
 		func() int {
@@ -60,15 +51,12 @@ func createItemToolbar() *widget.Toolbar {
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
 			itemForm := customItemForm()
-			modal = widget.NewModalPopUp(widget.NewCard("Add Command", "", itemForm), w.Canvas())
+			modal = widget.NewModalPopUp(itemForm, w.Canvas())
 			modal.Resize(fyne.NewSize(512, 0))
 			modal.Show()
 		}),
 		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
-			commandForm := removeCommand()
-			modal = widget.NewModalPopUp(widget.NewCard("Remove Command", "", commandForm), w.Canvas())
-			modal.Resize(fyne.NewSize(512, 0))
-			modal.Show()
+			return
 		}),
 	)
 	return toolbar
