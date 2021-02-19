@@ -37,7 +37,6 @@ func SlashExists(cmd Command) bool {
 
 // Create the form the user will input information into
 func createCommandForm() *widget.Form {
-
 	cmdType := []string {"Player", "Block", "Console"}
 	CommandType := ""
 	commandTypeEntry := widget.NewSelect(cmdType, func(s string) {
@@ -146,17 +145,21 @@ func createCommand(cmd Command) {
 		}
 	}
 	PluginProjects[index] = *proj
-	
-	// Create the Java file for editing using the template below
-	f, err := os.Create("projects/" + CWP + "/src/main/java/com/terturl/net/cmds/" + cmd.Name + ".java")
-	if err != nil {
-		log.Print("Error: ", err)
-	}
-	t := template.Must(template.New("CreateCommand").Parse(cmdJavaTmpl))
-	err = t.Execute(f, &cmd)
-	if err != nil {
-		log.Print("Error: ", err)
-	}
-	f.Close()
 	SetNewContent()
+}
+
+func buildCommands(proj *Project) {
+	for _, cmd := range proj.Cmds {
+		// Create the Java file for editing using the template below
+		f, err := os.Create("projects/" + CWP + "/src/main/java/com/terturl/net/cmds/" + cmd.Name + ".java")
+		if err != nil {
+			log.Print("Error: ", err)
+		}
+		t := template.Must(template.New("CreateCommand").Parse(cmdJavaTmpl))
+		err = t.Execute(f, &cmd)
+		if err != nil {
+			log.Print("Error: ", err)
+		}
+		f.Close()
+	}
 }
