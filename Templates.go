@@ -80,7 +80,8 @@ public class {{.Name}} implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-		// <<TYPE:{{.CommandType}}>>
+		// <<CMDTYPE:{{.CommandType}}>>
+		{{ if eq $.CommandType "Player" }}Player p = (Player)cs;{{end}}
 		if(label.equalsIgnoreCase("{{.SlashCommand}}")) {
 			
 		}
