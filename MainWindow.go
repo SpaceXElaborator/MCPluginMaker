@@ -56,6 +56,24 @@ func createCmdToolbar() *widget.Toolbar {
 	return toolbar
 }
 
+func createItemToolbar() *widget.Toolbar {
+	toolbar := widget.NewToolbar(
+		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
+			itemForm := customItemForm()
+			modal = widget.NewModalPopUp(widget.NewCard("Add Command", "", itemForm), w.Canvas())
+			modal.Resize(fyne.NewSize(512, 0))
+			modal.Show()
+		}),
+		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
+			commandForm := removeCommand()
+			modal = widget.NewModalPopUp(widget.NewCard("Remove Command", "", commandForm), w.Canvas())
+			modal.Resize(fyne.NewSize(512, 0))
+			modal.Show()
+		}),
+	)
+	return toolbar
+}
+
 // Create the top bar for creating projects, deleting projects, and the settings
 func createToolbar() *widget.Toolbar {
 	toolbar := widget.NewToolbar(
@@ -118,7 +136,7 @@ func SetNewContent() {
 				nil,
 				nil,
 				nil,
-				CreateCommandBlocksTest(),
+				CreateCommandBlocks(),
 			),
 		),
 		container.NewTabItem("Listeners", 
@@ -127,16 +145,16 @@ func SetNewContent() {
 				nil,
 				nil,
 				nil,
-				CreateCommandBlocksTest(),
+				CreateCommandBlocks(),
 			),
 		),
 		container.NewTabItem("Items", 
 			container.NewBorder(
-				createCmdToolbar(),
+				createItemToolbar(),
 				nil,
 				nil,
 				nil,
-				CreateCommandBlocksTest(),
+				CreateCommandBlocks(),
 			),
 		),
 	)
@@ -157,19 +175,24 @@ func SetNewContent() {
 	w.SetContent(c)
 }
 
-func CreateCommandBlocksTest() fyne.CanvasObject {
+func CreateCommandBlocks() fyne.CanvasObject {
 	var test []fyne.CanvasObject
 	
 	for _, f := range GetProject(CWP).Cmds {
+	
+		cont := widget.NewCard("", "Functions", container.NewVScroll(widget.NewAccordion(
+			widget.NewAccordionItem("Test", widget.NewLabel("Test")),
+		)))
+		
 		card := widget.NewCard(
 			f.Name,
-			f.SlashCommand,
-			nil,
+			"/" + f.SlashCommand,
+			cont,
 		)
 		test = append(test, card)
 	}
 	
-	content := container.NewVScroll(container.NewGridWithColumns(3, test...))
+	content := container.NewVScroll(container.NewGridWrap(fyne.NewSize(270, 290), test...))
 	return content
 }
 
