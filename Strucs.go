@@ -6,7 +6,7 @@ type Settings struct {
 }
 
 type Command struct {
-	Author, Name, SlashCommand string
+	Author, CommandType, Name, SlashCommand string
 }
 
 type CustomItem struct {

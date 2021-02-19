@@ -37,6 +37,17 @@ func SlashExists(cmd Command) bool {
 
 // Create the form the user will input information into
 func createCommandForm() *widget.Form {
+
+	cmdType := []string {"Player", "Block", "Console"}
+	CommandType := ""
+	commandTypeEntry := widget.NewSelect(cmdType, func(s string) {
+		CommandType = s
+	})
+	commandTypeFormItem := &widget.FormItem {
+		Text: "Command Executor",
+		Widget: commandTypeEntry,
+	}
+
 	commandNameEntry := widget.NewEntry()
 	commandNameEntry.Resize(fyne.NewSize(300, 300))
 	commandNameEntry.SetText("")
@@ -53,14 +64,13 @@ func createCommandForm() *widget.Form {
 		Widget: slashStringEntry,
 	}
 	
-	newCommandForm := widget.NewForm(commandNameFormItem, slashStringFormItem)
+	newCommandForm := widget.NewForm(commandTypeFormItem, commandNameFormItem, slashStringFormItem)
 	newCommandForm.OnSubmit = func() {
-		if commandNameEntry.Text != "" && slashStringEntry.Text != "" {
-			cmd := Command{GetAuthor(), commandNameEntry.Text, slashStringEntry.Text}
+		if CommandType != "" && commandNameEntry.Text != "" && slashStringEntry.Text != "" {
+			cmd := Command{GetAuthor(), CommandType, commandNameEntry.Text, slashStringEntry.Text}
 			if(CommandExist(cmd) != true) {
 				if(SlashExists(cmd) != true) {
 					createCommand(cmd)
-					
 					// HideModal() in MainWindow.go
 					HideModal()
 				} else {

@@ -79,6 +79,9 @@ func createToolbar() *widget.Toolbar {
 		}),
 		widget.NewToolbarAction(theme.DocumentSaveIcon(), func() {
 			proj := GetProject(CWP)
+			if proj == nil {
+				return
+			}
 			build(proj)
 		}),
 		widget.NewToolbarSpacer(),
@@ -129,11 +132,11 @@ func SetNewContent() {
 		),
 		container.NewTabItem("Listeners", 
 			container.NewBorder(
-				createCmdToolbar(),
+				nil, // TODO: Add Listener Toolbar
 				nil,
 				nil,
 				nil,
-				CreateCommandBlocks(),
+				widget.NewLabel("Not Impleted Yet... Come Back Later"),
 			),
 		),
 		container.NewTabItem("Items", 
@@ -142,7 +145,7 @@ func SetNewContent() {
 				nil,
 				nil,
 				nil,
-				CreateCommandBlocks(),
+				widget.NewLabel("Not Impleted Yet... Come Back Later"),
 			),
 		),
 	)
@@ -173,7 +176,7 @@ func CreateCommandBlocks() fyne.CanvasObject {
 		)))
 		
 		card := widget.NewCard(
-			f.Name,
+			f.CommandType + " Command",
 			"/" + f.SlashCommand,
 			cont,
 		)
