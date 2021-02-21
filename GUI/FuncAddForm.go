@@ -1,20 +1,22 @@
 package PluginGUI
 
 import (
-	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/widget"
-	"fyne.io/fyne/v2/dialog"
-	"strconv"
 	"errors"
-	
-	"SpaceXElaborator/PluginMaker/Command"
-	"SpaceXElaborator/PluginMaker/Settings"
+	"strconv"
+	"strings"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/widget"
+
+	PluginCommands "SpaceXElaborator/PluginMaker/Command"
+	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
 )
 
 func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
 	funcForm := widget.NewForm()
 	cmdTypes := []string{"Add Item", "Add Custom Item"}
-	
+
 	cmdFuncType := widget.NewSelect(cmdTypes, func(s string) {
 		modal.Hide()
 		if s == "Add Custom Item" {
@@ -25,24 +27,24 @@ func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
 		modal.Resize(fyne.NewSize(512, 0))
 		modal.Show()
 	})
-	
-	cmdFuncTypeFormItem := &widget.FormItem {
-		Text: "Command Function",
+
+	cmdFuncTypeFormItem := &widget.FormItem{
+		Text:   "Command Function",
 		Widget: cmdFuncType,
 	}
-	
+
 	funcForm.AppendItem(cmdFuncTypeFormItem)
-	
+
 	return funcForm
 }
 
 func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 	itemForm := widget.NewForm()
-	
+
 	itemName := ""
-	
+
 	proj := Projects.GetProject(PluginSettings.GetCWP())
-	
+
 	if custom {
 		var items []string
 		for _, item := range proj.Items {
@@ -52,10 +54,10 @@ func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 			itemName = s
 		})
 		itemForm.Append("Custom Item", cmdFuncType)
-		
+
 		itemAmount := widget.NewEntry()
 		itemForm.Append("Amount", itemAmount)
-		
+
 		itemForm.OnSubmit = func() {
 			if itemAmount.Text != "" && itemName != "" {
 				if _, err := strconv.Atoi(itemAmount.Text); err == nil {
@@ -73,7 +75,33 @@ func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 		}
 		itemForm.Refresh()
 	} else {
-		
+		itemType := widget.NewEntry()
+		itemAmount := widget.NewEntry()
+		itemForm.Append("Item Material", itemType)
+		itemForm.Append("Amount", itemAmount)
+
+		itemForm.OnSubmit = func() {
+			if itemType.Text != "" && itemAmount.Text != "" {
+				if proj.CheckMaterial(itemType.Text) {
+					if _, err := strconv.Atoi(itemAmount.Text); err == nil {
+						cmd.AddFunc("p.getInventory().addItem(new ItemStack(Material.valueOf(\"" + strings.ToUpper(itemType.Text) + "\"), " + itemAmount.Text + "));")
+						HideModal()
+					} else {
+						dialog.ShowError(errors.New("Amount must be a number"), GetWindow())
+					}
+				} else {
+					dialog.ShowError(errors.New("Item Doesn't Exist!"), GetWindow())
+				}
+			} else {
+				dialog.ShowError(errors.New("Fill in all values"), GetWindow())
+			}
+		}
+
+		itemForm.OnCancel = func() {
+			HideModal()
+		}
+
+		itemForm.Refresh()
 	}
 	return itemForm
 }
