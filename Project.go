@@ -162,7 +162,7 @@ func build(proj *Project) {
 	mvnCmd.Dir = "."
 	_, err := mvnCmd.Output()
 	if err != nil {
-		log.Print(err)
+		log.Print("Hahaha")
 	}
 	fyne.CurrentApp().SendNotification(&fyne.Notification{
 		Title:   "Build Complete",
