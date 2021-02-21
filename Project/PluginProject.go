@@ -105,6 +105,19 @@ func (proj *Project) createMainJava() {
 	java.Close()
 }
 
+func (proj *Project) createItemUtilClass() {
+	item, err := os.Create("projects/" + proj.Name + "/src/main/java/com/" + proj.Author + "/net/Item.java")
+	if err != nil {
+		log.Fatal("Unable to create \"Item.java\" file: ", err)
+	}
+	templ := template.Must(template.New("ItemUtil").Parse(PluginTemplates.GetItemUtilClassTemplate()))
+	err = templ.Execute(item, proj)
+	if err != nil {
+		log.Fatal("Unable to execute Item Creation Template: ", err)
+	}
+	item.Close()
+}
+
 func (proj *Project) createItemClass() {
 	item, err := os.Create("projects/" + proj.Name + "/src/main/java/com/" + proj.Author + "/net/" + proj.Name + "CustomItems.java")
 	if err != nil {
@@ -142,6 +155,7 @@ func (proj *Project) Build() {
 	}
 	
 	if len(proj.Items) > 0 {
+		proj.createItemUtilClass()
 		proj.createItemClass()
 	}
 	
