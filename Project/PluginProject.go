@@ -1,26 +1,26 @@
 package PluginProject
 
 import (
-	"strings"
 	"errors"
+	"log"
 	"os"
 	"os/exec"
-	"log"
-	
+	"strings"
+
 	"text/template"
-	
+
 	"fyne.io/fyne/v2"
-	
-	"SpaceXElaborator/PluginMaker/Templates"
-	"SpaceXElaborator/PluginMaker/Command"
-	"SpaceXElaborator/PluginMaker/Item"
+
+	PluginCommands "SpaceXElaborator/PluginMaker/Command"
+	PluginItems "SpaceXElaborator/PluginMaker/Item"
+	PluginTemplates "SpaceXElaborator/PluginMaker/Templates"
 )
 
 type Project struct {
 	Name, Author string
-	Xml PomXML
-	Cmds []*PluginCommands.Command
-	Items []*PluginItems.CustomItem
+	Xml          PomXML
+	Cmds         []*PluginCommands.Command
+	Items        []*PluginItems.CustomItem
 }
 
 type PomXML struct {
@@ -36,10 +36,10 @@ func (proj *Project) AddCommand(name, slash, cmdType string) error {
 			return errors.New("Slash String Exists")
 		}
 	}
-	
-	cmd := PluginCommands.Command{proj.Author, cmdType, name, slash, []*PluginCommands.CommandFunc{}}
+
+	cmd := PluginCommands.Command{Author: proj.Author, CommandType: cmdType, Name: name, SlashCommand: slash, CmdFuncs: []*PluginCommands.CommandFunc{}}
 	proj.Cmds = append(proj.Cmds, &cmd)
-	os.MkdirAll("projects/" + proj.Name + "/src/main/java/com/" + proj.Author + "/net/cmds", os.ModePerm)
+	os.MkdirAll("projects/"+proj.Name+"/src/main/java/com/"+proj.Author+"/net/cmds", os.ModePerm)
 	return nil
 }
 
@@ -59,9 +59,9 @@ func (proj *Project) RemoveCommand(name string) {
 			i = ind
 		}
 	}
-	
+
 	os.Remove("projects/" + proj.Name + "/src/main/java/com/" + proj.Author + "/net/cmds/" + name + ".java")
-	
+
 	copy(proj.Cmds[i:], proj.Cmds[i+1:])
 	proj.Cmds = proj.Cmds[:len(proj.Cmds)-1]
 }
@@ -149,18 +149,17 @@ func (proj *Project) buildCommands() {
 func (proj *Project) Build() {
 	proj.createYaml()
 	proj.createMainJava()
-	
+
 	if len(proj.Cmds) > 0 {
 		proj.buildCommands()
 	}
-	
+
 	if len(proj.Items) > 0 {
 		proj.createItemUtilClass()
 		proj.createItemClass()
 	}
-	
-	
-	mvnCmd := exec.Command("mvn", "-f", "./projects/" + proj.Name + "/pom.xml", "package")
+
+	mvnCmd := exec.Command("mvn", "-f", "./projects/"+proj.Name+"/pom.xml", "package")
 	mvnCmd.Dir = "."
 	_, err := mvnCmd.Output()
 	if err != nil {
@@ -173,7 +172,7 @@ func (proj *Project) Build() {
 }
 
 func (proj *Project) AddItem(itemMat, itemName string, itemDesc []string) {
-	newItem := PluginItems.CustomItem{itemMat, itemName, itemDesc}
+	newItem := PluginItems.CustomItem{ItemMaterial: itemMat, ItemName: itemName, ItemDescription: itemDesc}
 	proj.Items = append(proj.Items, &newItem)
 }
 

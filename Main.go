@@ -1,14 +1,14 @@
 package main
 
 import (
-	"SpaceXElaborator/PluginMaker/Project"
-	"SpaceXElaborator/PluginMaker/GUI"
-	"SpaceXElaborator/PluginMaker/Settings"
+	PluginGUI "SpaceXElaborator/PluginMaker/GUI"
+	PluginProject "SpaceXElaborator/PluginMaker/Project"
+	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
 )
 
 var (
-	AllProjects = PluginProject.Projects{[]*PluginProject.Project{}}
-	
+	AllProjects = PluginProject.Projects{Projects: []*PluginProject.Project{}}
+
 	Test = "Hello"
 )
 
