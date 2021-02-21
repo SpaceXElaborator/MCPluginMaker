@@ -15,8 +15,6 @@ public class Main extends JavaPlugin {
 		instance = this;
 	{{with .Cmds -}}{{range $val := .}}	getCommand("{{$val.SlashCommand}}").setExecutor(new {{$val.Name}}());
 	{{end}}{{end}}
-	
-		{{.Name}}CustomItems.RegisterItems();
 	}
 	
 	public static Main getInstance() {
