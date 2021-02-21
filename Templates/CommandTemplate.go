@@ -16,7 +16,7 @@ public class {{.Name}} implements CommandExecutor {
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 		// <<CMDTYPE:{{.CommandType}}>>
 		{{ if eq $.CommandType "Player" }}Player p = (Player)cs;{{end}}
-		if(label.equalsIgnoreCase("{{.SlashCommand}}")) {
+		if(cmd.getName().equalsIgnoreCase("{{.SlashCommand}}")) {
 			{{ if eq $.CommandType "Player" }}
 			{{with .CmdFuncs -}}{{range $strings := .}}// <<CMDSTRING:{{.CommandString}}>>
 			{{.CommandString}}
