@@ -50,7 +50,7 @@ func customItemForm() *widget.Form {
 			if CheckItem(itemNameEntry.Text) != true {
 				stringToCheck := strings.ReplaceAll(strings.ToUpper(itemMaterialEntry.Text), " ", "_")
 				if(CheckMaterial(stringToCheck)) {
-					newItem := CustomItem{GetAuthor(), stringToCheck, itemNameEntry.Text, strings.Split(itemDescEntry.Text, "\n")}
+					newItem := CustomItem{GetAuthor(), strings.ToUpper(stringToCheck), itemNameEntry.Text, strings.Split(itemDescEntry.Text, "\n")}
 				
 					proj := GetProject(CWP)
 					proj.Items = append(proj.Items, newItem)
