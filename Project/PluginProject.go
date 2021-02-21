@@ -187,7 +187,7 @@ func (proj *Project) CheckItem(s string) bool {
 
 func (proj *Project) CheckMaterial(a string) bool {
 	for _, item := range PluginItems.SpigotMaterialList {
-		if item == a {
+		if strings.EqualFold(a, item) {
 			return true
 		}
 	}
