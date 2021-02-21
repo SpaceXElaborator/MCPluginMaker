@@ -59,7 +59,7 @@ func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 		itemForm.OnSubmit = func() {
 			if itemAmount.Text != "" && itemName != "" {
 				if _, err := strconv.Atoi(itemAmount.Text); err == nil {
-					cmd.AddFunc("p.getInventory().addItem(" + PluginSettings.GetCWP() + "CustomItems.getItem(\"" + itemName + "\"));")
+					cmd.AddFunc("p.getInventory().addItem(" + PluginSettings.GetCWP() + "CustomItems.build(\"" + itemName + "\", " + itemAmount.Text + "));")
 					HideModal()
 				} else {
 					dialog.ShowError(errors.New("Amount must be a number"), GetWindow())
