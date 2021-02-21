@@ -92,7 +92,7 @@ func initSettings() {
 			itemsInFile := itemsRegString.FindAllStringSubmatch(itemsString, -1)
 			for _, v := range itemsInFile {
 				itemMakerString := strings.Split(v[1], "||")
-				var tmp []string
+				tmp := []string{}
 				for _, strs := range strings.Split(itemMakerString[2], `\n`) {
 					if strs == "\n" || strs == "" {
 						continue
@@ -117,16 +117,23 @@ func initSettings() {
 				cmdString := string(content)
 				slashCmd := regexp.MustCompile(`if\(label.equalsIgnoreCase\("(.*)"\)\)`)
 				cmdType := regexp.MustCompile(`<<CMDTYPE:(.*)>>`)
+				functionsInCmd := regexp.MustCompile(`<<CMDSTRING:(.*)>>`)
 				slashString := slashCmd.FindStringSubmatch(cmdString)
 				cmdTypeField := cmdType.FindStringSubmatch(cmdString)
+				funcsInCmd := functionsInCmd.FindAllStringSubmatch(cmdString, -1)
 				if slashString == nil {
 					continue
 				}
 				if cmdTypeField == nil {
 					continue
 				}
+				tmp := []CommandFunc{}
+				for _, v := range funcsInCmd {
+					newFunc := CommandFunc{v[1]}
+					tmp = append(tmp, newFunc)
+				}
 				
-				cmd := Command{GetAuthor(), cmdTypeField[1], cmd.Name()[0:len(cmd.Name()) - 5], slashString[1]}
+				cmd := Command{GetAuthor(), cmdTypeField[1], cmd.Name()[0:len(cmd.Name()) - 5], slashString[1], tmp}
 				newProj.Cmds = append(newProj.Cmds, cmd)
 			}
 		}

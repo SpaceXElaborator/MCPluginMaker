@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/theme"
@@ -173,7 +174,12 @@ func CreateCommandBlocks() fyne.CanvasObject {
 		
 		toolbar := widget.NewToolbar(
 			widget.NewToolbarAction(theme.ContentAddIcon(), func() {
-				
+				if strings.EqualFold(f.CommandType, "Player") {
+					funcForm := playerCommandFuncAddForm(f)
+					modal = widget.NewModalPopUp(widget.NewCard("Add Command Function", "", funcForm), w.Canvas())
+					modal.Resize(fyne.NewSize(512, 0))
+					modal.Show()
+				}
 			}),
 			widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
 				

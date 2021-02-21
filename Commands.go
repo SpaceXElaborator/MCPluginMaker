@@ -66,7 +66,7 @@ func createCommandForm() *widget.Form {
 	newCommandForm := widget.NewForm(commandTypeFormItem, commandNameFormItem, slashStringFormItem)
 	newCommandForm.OnSubmit = func() {
 		if CommandType != "" && commandNameEntry.Text != "" && slashStringEntry.Text != "" {
-			cmd := Command{GetAuthor(), CommandType, commandNameEntry.Text, slashStringEntry.Text}
+			cmd := Command{GetAuthor(), CommandType, commandNameEntry.Text, slashStringEntry.Text, []CommandFunc{}}
 			if CommandExist(cmd) != true {
 				if(SlashExists(cmd) != true) {
 					createCommand(cmd)

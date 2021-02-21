@@ -7,6 +7,11 @@ type Settings struct {
 
 type Command struct {
 	Author, CommandType, Name, SlashCommand string
+	CmdFuncs []CommandFunc
+}
+
+type CommandFunc struct {
+	CommandString string
 }
 
 type CustomItem struct {
