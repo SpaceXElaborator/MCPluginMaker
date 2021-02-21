@@ -62,10 +62,10 @@ func createCmdToolbar() *widget.Toolbar {
 func createItemToolbar() *widget.Toolbar {
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
-			//itemForm := customItemForm()
-			//modal = widget.NewModalPopUp(itemForm, w.Canvas())
-			//modal.Resize(fyne.NewSize(512, 0))
-			//modal.Show()
+			itemForm := customItemForm()
+			modal = widget.NewModalPopUp(itemForm, w.Canvas())
+			modal.Resize(fyne.NewSize(512, 0))
+			modal.Show()
 		}),
 		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
 			return

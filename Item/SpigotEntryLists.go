@@ -1,7 +1,7 @@
 package PluginItems
 
 var (
-	spigotMaterialList = []string {
+	SpigotMaterialList = []string {
 		"STONE",
 		"GRANITE",
 		"POLISHED_GRANITE",
@@ -1080,12 +1080,3 @@ var (
 		"POTTED_WARPED_ROOTS",
 	}
 )
-
-func CheckMaterial(a string) bool {
-	for _, item := range spigotMaterialList {
-		if item == a {
-			return true
-		}
-	}
-	return false
-}

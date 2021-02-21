@@ -162,3 +162,21 @@ func (proj *Project) AddItem(itemMat, itemName string, itemDesc []string) {
 	newItem := PluginItems.CustomItem{itemMat, itemName, itemDesc}
 	proj.Items = append(proj.Items, &newItem)
 }
+
+func (proj *Project) CheckItem(s string) bool {
+	for _, f := range proj.Items {
+		if strings.EqualFold(f.ItemName, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func (proj *Project) CheckMaterial(a string) bool {
+	for _, item := range PluginItems.SpigotMaterialList {
+		if item == a {
+			return true
+		}
+	}
+	return false
+}
