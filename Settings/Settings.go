@@ -135,8 +135,9 @@ func InitSettings(projs *PluginProject.Projects) {
 				if err != nil {
 					continue
 				}
+				
 				cmdString := string(content)
-				slashCmd := regexp.MustCompile(`if\(label.equalsIgnoreCase\("(.*)"\)\)`)
+				slashCmd := regexp.MustCompile(`if\(cmd.getName\(\).equalsIgnoreCase\("(.*)"\)\)`)
 				cmdType := regexp.MustCompile(`<<CMDTYPE:(.*)>>`)
 				functionsInCmd := regexp.MustCompile(`<<CMDSTRING:(.*)>>`)
 				slashString := slashCmd.FindStringSubmatch(cmdString)
