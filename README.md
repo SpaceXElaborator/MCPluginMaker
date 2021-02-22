@@ -12,7 +12,7 @@ A Minecraft plugin maker using Maven, Go, and Java.
 * Download the provided .Exe from the above list and place in a folder on its own (It will create folders and a settings.json in that folder). The .exe will soon be hosted on a website with better instructions along with pictures (In development)
 * Start using!
 ## Building Instructions
-To build a project, simply hit the 'Build' button in the main screen after you've made sure the project you are building has been selected from the list on the left. This will place a {Name}-1.0.jar file in your projects\{Name of project}\target folder. Just drag-and-drop that into your plugins folder. Plugin has been built and installed!
+To build a project, simply hit the 'Build' button in the main toolbar (It's the save icon for right now) after you've made sure the project you are building has been selected from the list on the left. This will place a {Name}-1.0.jar file in your projects\{Name of project}\target folder. Just drag-and-drop that into your plugins folder. Plugin has been built and installed!
 ## Current Features
 * Auto build
 * Create/Load projects
