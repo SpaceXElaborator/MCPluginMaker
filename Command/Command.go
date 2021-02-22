@@ -1,17 +1,17 @@
 package PluginCommands
 
+import (
+	PluginFunction "SpaceXElaborator/PluginMaker/Function"
+)
+
 type Command struct {
-	Author string
-	CommandType string
-	Name string
+	Author       string
+	CommandType  string
+	Name         string
 	SlashCommand string
-	CmdFuncs []*CommandFunc
+	PlayerFuncs  []*PluginFunction.Function
 }
 
-type CommandFunc struct {
-	CommandString string
-}
-
-func (cmd *Command) AddFunc(strFunc string) {
-	cmd.CmdFuncs = append(cmd.CmdFuncs, &CommandFunc{strFunc})
+func (cmd *Command) AddPlayerFunc(strFunc string) {
+	cmd.PlayerFuncs = append(cmd.PlayerFuncs, &PluginFunction.Function{Func: strFunc})
 }

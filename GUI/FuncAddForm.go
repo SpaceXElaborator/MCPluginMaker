@@ -15,7 +15,7 @@ import (
 
 func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
 	funcForm := widget.NewForm()
-	cmdTypes := []string{"Add Item", "Add Custom Item"}
+	cmdTypes := []string{"Add Item", "Add Custom Item", "Set Health", "Set Food Level"}
 
 	cmdFuncType := widget.NewSelect(cmdTypes, func(s string) {
 		modal.Hide()
@@ -23,6 +23,10 @@ func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
 			modal = widget.NewModalPopUp(widget.NewCard("Spawn Custom Item", "", spawnItemForm(cmd, true)), w.Canvas())
 		} else if s == "Add Item" {
 			modal = widget.NewModalPopUp(widget.NewCard("Spawn Item", "", spawnItemForm(cmd, false)), w.Canvas())
+		} else if s == "Set Health" {
+
+		} else if s == "Set Food Level" {
+
 		}
 		modal.Resize(fyne.NewSize(512, 0))
 		modal.Show()
@@ -61,7 +65,7 @@ func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 		itemForm.OnSubmit = func() {
 			if itemAmount.Text != "" && itemName != "" {
 				if _, err := strconv.Atoi(itemAmount.Text); err == nil {
-					cmd.AddFunc("p.getInventory().addItem(" + PluginSettings.GetCWP() + "CustomItems.build(\"" + itemName + "\", " + itemAmount.Text + "));")
+					cmd.AddPlayerFunc("p.getInventory().addItem(" + PluginSettings.GetCWP() + "CustomItems.build(\"" + itemName + "\", " + itemAmount.Text + "));")
 					HideModal()
 				} else {
 					dialog.ShowError(errors.New("Amount must be a number"), GetWindow())
@@ -84,7 +88,7 @@ func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 			if itemType.Text != "" && itemAmount.Text != "" {
 				if proj.CheckMaterial(itemType.Text) {
 					if _, err := strconv.Atoi(itemAmount.Text); err == nil {
-						cmd.AddFunc("p.getInventory().addItem(new ItemStack(Material.valueOf(\"" + strings.ToUpper(itemType.Text) + "\"), " + itemAmount.Text + "));")
+						cmd.AddPlayerFunc("p.getInventory().addItem(new ItemStack(Material.valueOf(\"" + strings.ToUpper(itemType.Text) + "\"), " + itemAmount.Text + "));")
 						HideModal()
 					} else {
 						dialog.ShowError(errors.New("Amount must be a number"), GetWindow())

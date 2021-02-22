@@ -12,6 +12,7 @@ import (
 	"fyne.io/fyne/v2"
 
 	PluginCommands "SpaceXElaborator/PluginMaker/Command"
+	PluginFunction "SpaceXElaborator/PluginMaker/Function"
 	PluginItems "SpaceXElaborator/PluginMaker/Item"
 	PluginTemplates "SpaceXElaborator/PluginMaker/Templates"
 )
@@ -37,7 +38,7 @@ func (proj *Project) AddCommand(name, slash, cmdType string) error {
 		}
 	}
 
-	cmd := PluginCommands.Command{Author: proj.Author, CommandType: cmdType, Name: name, SlashCommand: slash, CmdFuncs: []*PluginCommands.CommandFunc{}}
+	cmd := PluginCommands.Command{Author: proj.Author, CommandType: cmdType, Name: name, SlashCommand: slash, PlayerFuncs: []*PluginFunction.Function{}}
 	proj.Cmds = append(proj.Cmds, &cmd)
 	os.MkdirAll("projects/"+proj.Name+"/src/main/java/com/"+proj.Author+"/net/cmds", os.ModePerm)
 	return nil

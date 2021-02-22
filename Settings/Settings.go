@@ -1,27 +1,27 @@
 package PluginSettings
 
 import (
-	"io/ioutil"
-	"os"
-	"log"
 	"encoding/json"
+	"io/ioutil"
+	"log"
+	"os"
 	"regexp"
 	"strings"
-	
-	"SpaceXElaborator/PluginMaker/Project"
+
+	PluginProject "SpaceXElaborator/PluginMaker/Project"
 )
 
 var (
-	CWP = ""
+	CWP    = ""
 	author = "User"
-	dark = false
-	
+	dark   = false
+
 	Projects *PluginProject.Projects
 )
 
 type Settings struct {
 	Author string `json:"Author"`
-	Dark bool `json:"Mode"`
+	Dark   bool   `json:"Mode"`
 }
 
 func GetAuthor() string {
@@ -56,9 +56,9 @@ func CreateDirs() {
 func Save() {
 	data := Settings{
 		Author: GetAuthor(),
-		Dark: GetDark(),
+		Dark:   GetDark(),
 	}
-	
+
 	file, _ := json.MarshalIndent(data, "", " ")
 	_ = ioutil.WriteFile("settings.json", file, os.ModePerm)
 }
@@ -77,19 +77,19 @@ func InitSettings(projs *PluginProject.Projects) {
 	json.Unmarshal(byteValue, &set)
 	dark = set.Dark
 	author = set.Author
-	
+
 	projects, err := ioutil.ReadDir("./projects")
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	// Read every folder in the /projects folder to reload projects made
 	for _, f := range projects {
 		content, err := ioutil.ReadFile("./projects/" + f.Name() + "/pom.xml")
 		if err != nil {
 			log.Fatal(err)
 		}
-		
+
 		// Get the pom.xml and use Regex to load the projects and create new Project strucs to save
 		pomString := string(content)
 		group := regexp.MustCompile(`<groupId>(.*)</groupId>`)
@@ -103,9 +103,9 @@ func InitSettings(projs *PluginProject.Projects) {
 			log.Print("Project Already Exists somehow! Skipping!")
 			continue
 		}
-		
+
 		newProj := Projects.GetProject(f.Name())
-		
+
 		_, err = os.Stat("./projects/" + f.Name() + "/src/main/java/com/" + GetAuthor() + "/net/" + f.Name() + "CustomItems.java")
 		if err == nil {
 			content, err := ioutil.ReadFile("./projects/" + f.Name() + "/src/main/java/com/" + GetAuthor() + "/net/" + f.Name() + "CustomItems.java")
@@ -126,7 +126,7 @@ func InitSettings(projs *PluginProject.Projects) {
 				}
 			}
 		}
-		
+
 		// Check if there are any commands that needs to be loaded
 		cmds, err := ioutil.ReadDir("./projects/" + f.Name() + "/src/main/java/com/" + GetAuthor() + "/net/cmds")
 		if err == nil {
@@ -135,7 +135,7 @@ func InitSettings(projs *PluginProject.Projects) {
 				if err != nil {
 					continue
 				}
-				
+
 				cmdString := string(content)
 				slashCmd := regexp.MustCompile(`if\(cmd.getName\(\).equalsIgnoreCase\("(.*)"\)\)`)
 				cmdType := regexp.MustCompile(`<<CMDTYPE:(.*)>>`)
@@ -149,12 +149,12 @@ func InitSettings(projs *PluginProject.Projects) {
 				if cmdTypeField == nil {
 					continue
 				}
-				
-				newProj.AddCommand(cmd.Name()[0:len(cmd.Name()) - 5], slashString[1], cmdTypeField[1])
-				createdCmd := newProj.GetCommand(cmd.Name()[0:len(cmd.Name()) - 5])
-				
+
+				newProj.AddCommand(cmd.Name()[0:len(cmd.Name())-5], slashString[1], cmdTypeField[1])
+				createdCmd := newProj.GetCommand(cmd.Name()[0 : len(cmd.Name())-5])
+
 				for _, v := range funcsInCmd {
-					createdCmd.AddFunc(v[1])
+					createdCmd.AddPlayerFunc(v[1])
 				}
 			}
 		}
