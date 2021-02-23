@@ -1,11 +1,11 @@
 package PluginGUI
 
 import (
+	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	
-	"SpaceXElaborator/PluginMaker/Settings"
 )
 
 // Create the top bar for creating projects, deleting projects, and the settings
