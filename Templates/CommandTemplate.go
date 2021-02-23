@@ -21,8 +21,8 @@ public class {{.Name}} implements CommandExecutor {
 		{{ if eq $.CommandType "Player" }}Player p = (Player)cs;{{end}}
 		if(cmd.getName().equalsIgnoreCase("{{.SlashCommand}}")) {
 			{{ if eq $.CommandType "Player" }}
-			{{with .CmdFuncs -}}{{range $strings := .}}// <<CMDSTRING:{{.CommandString}}>>
-			{{.CommandString}}
+			{{with .PlayerFuncs -}}{{range $strings := .}}// <<CMDSTRING:{{.Func}}>>
+			{{.Func}}
 			{{end}}{{end}}
 			{{end}}
 		}
