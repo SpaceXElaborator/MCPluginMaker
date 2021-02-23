@@ -7,8 +7,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-{{with .PluginImports -}}{{range $strings := .}}// <<IMPORT:{{.}}>>
+{{with .PluginImports -}}{{range $strings := .}}
+// <<IMPORT:{{.}}>>
 {{.}}{{end}}
 {{end}}
 import org.bukkit.Material;
