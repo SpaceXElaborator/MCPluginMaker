@@ -38,7 +38,7 @@ func (proj *Project) AddCommand(name, slash, cmdType string) error {
 		}
 	}
 
-	cmd := PluginCommands.Command{Author: proj.Author, CommandType: cmdType, Name: name, SlashCommand: slash, PlayerFuncs: []*PluginFunction.Function{}}
+	cmd := PluginCommands.Command{Author: proj.Author, CommandType: cmdType, Name: name, SlashCommand: slash, PluginImports: []string{}, PlayerFuncs: []*PluginFunction.Function{}}
 	proj.Cmds = append(proj.Cmds, &cmd)
 	os.MkdirAll("projects/"+proj.Name+"/src/main/java/com/"+proj.Author+"/net/cmds", os.ModePerm)
 	return nil

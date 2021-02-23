@@ -140,9 +140,11 @@ func InitSettings(projs *PluginProject.Projects) {
 				slashCmd := regexp.MustCompile(`if\(cmd.getName\(\).equalsIgnoreCase\("(.*)"\)\)`)
 				cmdType := regexp.MustCompile(`<<CMDTYPE:(.*)>>`)
 				functionsInCmd := regexp.MustCompile(`<<CMDSTRING:(.*)>>`)
+				importsInCmd := regexp.MustCompile(`<<IMPORT:(.*)>>`)
 				slashString := slashCmd.FindStringSubmatch(cmdString)
 				cmdTypeField := cmdType.FindStringSubmatch(cmdString)
 				funcsInCmd := functionsInCmd.FindAllStringSubmatch(cmdString, -1)
+				impsInCmd := importsInCmd.FindAllStringSubmatch(cmdString, -1)
 				if slashString == nil {
 					continue
 				}
@@ -156,6 +158,10 @@ func InitSettings(projs *PluginProject.Projects) {
 				for _, v := range funcsInCmd {
 					cmdFuncString := strings.Split(v[1], "||")
 					createdCmd.AddPlayerFunc(cmdFuncString[0], cmdFuncString[1])
+				}
+
+				for _, v := range impsInCmd {
+					createdCmd.AddImport(v[1])
 				}
 			}
 		}
