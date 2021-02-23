@@ -78,6 +78,7 @@ func playerFuncListValue(cmd *PluginCommands.Command, nameOf, enumVal, spigotFun
 			}
 			cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+enumVal+".valueOf(\""+strings.ToUpper(stringValue)+"\"));")
 			HideModal()
+			SetNewContent()
 		} else {
 			dialog.NewError(errors.New("Must Select Value"), GetWindow())
 		}
@@ -106,6 +107,7 @@ func playerFuncIntValue(cmd *PluginCommands.Command, nameOf, spigotFunction stri
 				}
 				cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+intToEnter.Text+");")
 				HideModal()
+				SetNewContent()
 			} else {
 				dialog.NewError(errors.New("Value Must Be A Number"), GetWindow())
 			}
@@ -137,6 +139,7 @@ func playerFuncFloatValue(cmd *PluginCommands.Command, nameOf, spigotFunction st
 				}
 				cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+strconv.FormatFloat(floatVal, 'f', 1, 64)+");")
 				HideModal()
+				SetNewContent()
 			} else {
 				dialog.NewError(errors.New("Value Must Be A Float (I.E. 1.0)"), GetWindow())
 			}
@@ -167,6 +170,7 @@ func playerFuncStringValue(cmd *PluginCommands.Command, nameOf, spigotFunction s
 			}
 			cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"(\""+stringToEnter.Text+"\");")
 			HideModal()
+			SetNewContent()
 		} else {
 			dialog.NewError(errors.New("Must Enter Value"), GetWindow())
 		}
@@ -206,6 +210,7 @@ func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 				if _, err := strconv.Atoi(itemAmount.Text); err == nil {
 					cmd.AddPlayerFunc("Add Custom Item", "p.getInventory().addItem("+PluginSettings.GetCWP()+"CustomItems.build(\""+itemName+"\", "+itemAmount.Text+"));")
 					HideModal()
+					SetNewContent()
 				} else {
 					dialog.ShowError(errors.New("Amount must be a number"), GetWindow())
 				}
@@ -229,6 +234,7 @@ func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 					if _, err := strconv.Atoi(itemAmount.Text); err == nil {
 						cmd.AddPlayerFunc("Add Item", "p.getInventory().addItem(new ItemStack(Material.valueOf(\""+strings.ToUpper(itemType.Text)+"\"), "+itemAmount.Text+"));")
 						HideModal()
+						SetNewContent()
 					} else {
 						dialog.ShowError(errors.New("Amount must be a number"), GetWindow())
 					}
