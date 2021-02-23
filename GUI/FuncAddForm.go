@@ -15,20 +15,30 @@ import (
 
 func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
 	funcForm := widget.NewForm()
-	cmdTypes := []string{"Add Item", "Add Custom Item", "Set Health", "Set Food Level", "Send Message"}
+	cmdTypes := []string{"Add Item", "Add Custom Item", "Set Health", "Set Food Level", "Send Message", "Set Display Name", "Set Level", "Set Exp", "Set Max Health", "Set Gamemode"}
 
 	cmdFuncType := widget.NewSelect(cmdTypes, func(s string) {
 		modal.Hide()
 		if s == "Add Custom Item" {
-			modal = widget.NewModalPopUp(widget.NewCard("Spawn Custom Item", "", spawnItemForm(cmd, true)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", spawnItemForm(cmd, true)), w.Canvas())
 		} else if s == "Add Item" {
-			modal = widget.NewModalPopUp(widget.NewCard("Spawn Item", "", spawnItemForm(cmd, false)), w.Canvas())
-		} else if s == "Set Health" {
-			modal = widget.NewModalPopUp(widget.NewCard("Set Health", "", playerFuncFloatValue(cmd, "Set Health", "setHealth")), w.Canvas())
-		} else if s == "Set Food Level" {
-			modal = widget.NewModalPopUp(widget.NewCard("Set Food Level", "", playerFuncIntValue(cmd, "Set Food", "setFoodLevel")), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", spawnItemForm(cmd, false)), w.Canvas())
 		} else if s == "Send Message" {
-			modal = widget.NewModalPopUp(widget.NewCard("Send Message", "", playerFuncStringValue(cmd, "Send Message", "sendMessage")), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncStringValue(cmd, "Send Message", "sendMessage", nil)), w.Canvas())
+		} else if s == "Set Display Name" {
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncStringValue(cmd, "Set Name", "setDisplayName", nil)), w.Canvas())
+		} else if s == "Set Level" {
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncIntValue(cmd, "Set Level", "setLevel", nil)), w.Canvas())
+		} else if s == "Set Exp" {
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncFloatValue(cmd, "Set Exp", "setExp", nil)), w.Canvas())
+		} else if s == "Set Max Health" {
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncFloatValue(cmd, "Set Max Health", "setMaxHealth", nil)), w.Canvas())
+		} else if s == "Set Health" {
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncFloatValue(cmd, "Set Health", "setHealth", nil)), w.Canvas())
+		} else if s == "Set Food Level" {
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncIntValue(cmd, "Set Food", "setFoodLevel", nil)), w.Canvas())
+		} else if s == "Set Gamemode" {
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncListValue(cmd, "Set Gamemode", "GameMode", "setGameMode", []string{"Survival", "Creative", "Adventure", "Spectator"}, []string{"import org.bukkit.GameMode;"})), w.Canvas())
 		}
 		modal.Resize(fyne.NewSize(512, 0))
 		modal.Show()
@@ -48,7 +58,39 @@ func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
 	return funcForm
 }
 
-func playerFuncIntValue(cmd *PluginCommands.Command, nameOf, spigotFunction string) *widget.Form {
+func playerFuncListValue(cmd *PluginCommands.Command, nameOf, enumVal, spigotFunction string, listValues, imports []string) *widget.Form {
+	form := widget.NewForm()
+
+	stringValue := ""
+
+	funcList := widget.NewSelect(listValues, func(s string) {
+		stringValue = s
+	})
+
+	form.Append("Select", funcList)
+
+	form.OnSubmit = func() {
+		if stringValue != "" {
+			if len(imports) >= 1 {
+				for _, imps := range imports {
+					cmd.AddImport(imps)
+				}
+			}
+			cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+enumVal+".valueOf(\""+strings.ToUpper(stringValue)+"\"));")
+			HideModal()
+		} else {
+			dialog.NewError(errors.New("Must Select Value"), GetWindow())
+		}
+	}
+
+	form.OnCancel = func() {
+		HideModal()
+	}
+	form.Refresh()
+	return form
+}
+
+func playerFuncIntValue(cmd *PluginCommands.Command, nameOf, spigotFunction string, imports []string) *widget.Form {
 	form := widget.NewForm()
 
 	intToEnter := widget.NewEntry()
@@ -57,6 +99,11 @@ func playerFuncIntValue(cmd *PluginCommands.Command, nameOf, spigotFunction stri
 	form.OnSubmit = func() {
 		if intToEnter.Text != "" {
 			if _, err := strconv.Atoi(intToEnter.Text); err == nil {
+				if len(imports) >= 1 {
+					for _, imps := range imports {
+						cmd.AddImport(imps)
+					}
+				}
 				cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+intToEnter.Text+");")
 				HideModal()
 			} else {
@@ -74,7 +121,7 @@ func playerFuncIntValue(cmd *PluginCommands.Command, nameOf, spigotFunction stri
 	return form
 }
 
-func playerFuncFloatValue(cmd *PluginCommands.Command, nameOf, spigotFunction string) *widget.Form {
+func playerFuncFloatValue(cmd *PluginCommands.Command, nameOf, spigotFunction string, imports []string) *widget.Form {
 	form := widget.NewForm()
 
 	intToEnter := widget.NewEntry()
@@ -83,6 +130,11 @@ func playerFuncFloatValue(cmd *PluginCommands.Command, nameOf, spigotFunction st
 	form.OnSubmit = func() {
 		if intToEnter.Text != "" {
 			if floatVal, err := strconv.ParseFloat(intToEnter.Text, 10); err == nil {
+				if len(imports) >= 1 {
+					for _, imps := range imports {
+						cmd.AddImport(imps)
+					}
+				}
 				cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+strconv.FormatFloat(floatVal, 'f', 1, 64)+");")
 				HideModal()
 			} else {
@@ -100,7 +152,7 @@ func playerFuncFloatValue(cmd *PluginCommands.Command, nameOf, spigotFunction st
 	return form
 }
 
-func playerFuncStringValue(cmd *PluginCommands.Command, nameOf, spigotFunction string) *widget.Form {
+func playerFuncStringValue(cmd *PluginCommands.Command, nameOf, spigotFunction string, imports []string) *widget.Form {
 	form := widget.NewForm()
 
 	stringToEnter := widget.NewEntry()
@@ -108,6 +160,11 @@ func playerFuncStringValue(cmd *PluginCommands.Command, nameOf, spigotFunction s
 
 	form.OnSubmit = func() {
 		if stringToEnter.Text != "" {
+			if len(imports) >= 1 {
+				for _, imps := range imports {
+					cmd.AddImport(imps)
+				}
+			}
 			cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"(\""+stringToEnter.Text+"\");")
 			HideModal()
 		} else {
@@ -143,6 +200,8 @@ func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 		itemForm.Append("Amount", itemAmount)
 
 		itemForm.OnSubmit = func() {
+			cmd.AddImport("import org.bukkit.Material;")
+			cmd.AddImport("import org.bukkit.inventory.ItemStack;")
 			if itemAmount.Text != "" && itemName != "" {
 				if _, err := strconv.Atoi(itemAmount.Text); err == nil {
 					cmd.AddPlayerFunc("Add Custom Item", "p.getInventory().addItem("+PluginSettings.GetCWP()+"CustomItems.build(\""+itemName+"\", "+itemAmount.Text+"));")
