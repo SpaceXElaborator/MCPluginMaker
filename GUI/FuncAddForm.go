@@ -24,21 +24,21 @@ func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
 		} else if s == "Add Item" {
 			modal = widget.NewModalPopUp(widget.NewCard(s, "", spawnItemForm(cmd, false)), w.Canvas())
 		} else if s == "Send Message" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncStringValue(cmd, "Send Message", "sendMessage", nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "string", "Send Message", "", "sendMessage", nil, nil)), w.Canvas())
 		} else if s == "Set Display Name" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncStringValue(cmd, "Set Name", "setDisplayName", nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "string", "Set Name", "", "setDisplayName", nil, nil)), w.Canvas())
 		} else if s == "Set Level" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncIntValue(cmd, "Set Level", "setLevel", nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "int", "Set Level", "", "setLevel", nil, nil)), w.Canvas())
 		} else if s == "Set Exp" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncFloatValue(cmd, "Set Exp", "setExp", nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "float", "Set Exp", "", "setExp", nil, nil)), w.Canvas())
 		} else if s == "Set Max Health" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncFloatValue(cmd, "Set Max Health", "setMaxHealth", nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "float", "Set Max Health", "", "setMaxHealth", nil, nil)), w.Canvas())
 		} else if s == "Set Health" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncFloatValue(cmd, "Set Health", "setHealth", nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "float", "Set Health", "", "setHealth", nil, nil)), w.Canvas())
 		} else if s == "Set Food Level" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncIntValue(cmd, "Set Food", "setFoodLevel", nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "int", "Set Food", "", "setFoodLevel", nil, nil)), w.Canvas())
 		} else if s == "Set Gamemode" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncListValue(cmd, "Set Gamemode", "GameMode", "setGameMode", []string{"Survival", "Creative", "Adventure", "Spectator"}, []string{"import org.bukkit.GameMode;"})), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "list", "Set Gamemode", "GameMode", "setGameMode", []string{"Survival", "Creative", "Adventure", "Spectator"}, []string{"import org.bukkit.GameMode;"})), w.Canvas())
 		}
 		modal.Resize(fyne.NewSize(512, 0))
 		modal.Show()
@@ -58,121 +58,66 @@ func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
 	return funcForm
 }
 
-func playerFuncListValue(cmd *PluginCommands.Command, nameOf, enumVal, spigotFunction string, listValues, imports []string) *widget.Form {
+func playerFuncAddition(cmd *PluginCommands.Command, addType, nameOf, enumVal, spigotFunction string, listValues, imports []string) *widget.Form {
 	form := widget.NewForm()
 
-	stringValue := ""
+	var widgetToAdd fyne.CanvasObject
+	selectItemToSet := ""
 
-	funcList := widget.NewSelect(listValues, func(s string) {
-		stringValue = s
-	})
-
-	form.Append("Select", funcList)
-
-	form.OnSubmit = func() {
-		if stringValue != "" {
-			if len(imports) >= 1 {
-				for _, imps := range imports {
-					cmd.AddImport(imps)
-				}
-			}
-			cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+enumVal+".valueOf(\""+strings.ToUpper(stringValue)+"\"));")
-			HideModal()
-			SetNewContent()
-		} else {
-			dialog.NewError(errors.New("Must Select Value"), GetWindow())
-		}
+	if addType == "int" || addType == "string" || addType == "float" {
+		widgetToAdd = widget.NewEntry()
+	} else if addType == "list" {
+		widgetToAdd = widget.NewSelect(listValues, func(s string) {
+			selectItemToSet = s
+		})
 	}
 
-	form.OnCancel = func() {
-		HideModal()
+	if addType == "list" {
+		form.Append("Select", widgetToAdd)
+	} else {
+		form.Append("Value ("+addType+")", widgetToAdd)
 	}
-	form.Refresh()
-	return form
-}
-
-func playerFuncIntValue(cmd *PluginCommands.Command, nameOf, spigotFunction string, imports []string) *widget.Form {
-	form := widget.NewForm()
-
-	intToEnter := widget.NewEntry()
-	form.Append("Integer", intToEnter)
 
 	form.OnSubmit = func() {
-		if intToEnter.Text != "" {
-			if _, err := strconv.Atoi(intToEnter.Text); err == nil {
+		if addType == "list" {
+			if selectItemToSet != "" {
 				if len(imports) >= 1 {
 					for _, imps := range imports {
 						cmd.AddImport(imps)
 					}
 				}
-				cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+intToEnter.Text+");")
+				cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+enumVal+".valueOf(\""+strings.ToUpper(selectItemToSet)+"\"));")
 				HideModal()
 				SetNewContent()
 			} else {
-				dialog.NewError(errors.New("Value Must Be A Number"), GetWindow())
+				dialog.NewError(errors.New("Must Select Value"), GetWindow())
 			}
 		} else {
-			dialog.NewError(errors.New("Must Enter Value"), GetWindow())
-		}
-	}
-
-	form.OnCancel = func() {
-		HideModal()
-	}
-	form.Refresh()
-	return form
-}
-
-func playerFuncFloatValue(cmd *PluginCommands.Command, nameOf, spigotFunction string, imports []string) *widget.Form {
-	form := widget.NewForm()
-
-	intToEnter := widget.NewEntry()
-	form.Append("Double", intToEnter)
-
-	form.OnSubmit = func() {
-		if intToEnter.Text != "" {
-			if floatVal, err := strconv.ParseFloat(intToEnter.Text, 10); err == nil {
+			if widgetToAdd.(*widget.Entry).Text != "" {
+				if addType == "int" {
+					if _, err := strconv.Atoi(widgetToAdd.(*widget.Entry).Text); err != nil {
+						return
+					}
+					cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+widgetToAdd.(*widget.Entry).Text+");")
+				} else if addType == "float" {
+					if _, err := strconv.ParseFloat(widgetToAdd.(*widget.Entry).Text, 10); err != nil {
+						return
+					}
+					floatVal, _ := strconv.ParseFloat(widgetToAdd.(*widget.Entry).Text, 10)
+					cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+strconv.FormatFloat(floatVal, 'f', 1, 64)+");")
+				} else {
+					cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"(\""+widgetToAdd.(*widget.Entry).Text+"\");")
+				}
 				if len(imports) >= 1 {
 					for _, imps := range imports {
 						cmd.AddImport(imps)
 					}
 				}
-				cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+strconv.FormatFloat(floatVal, 'f', 1, 64)+");")
 				HideModal()
 				SetNewContent()
 			} else {
-				dialog.NewError(errors.New("Value Must Be A Float (I.E. 1.0)"), GetWindow())
+				dialog.NewError(errors.New("Must Input Value"), GetWindow())
 			}
-		} else {
-			dialog.NewError(errors.New("Must Enter Value"), GetWindow())
-		}
-	}
-
-	form.OnCancel = func() {
-		HideModal()
-	}
-	form.Refresh()
-	return form
-}
-
-func playerFuncStringValue(cmd *PluginCommands.Command, nameOf, spigotFunction string, imports []string) *widget.Form {
-	form := widget.NewForm()
-
-	stringToEnter := widget.NewEntry()
-	form.Append("Value", stringToEnter)
-
-	form.OnSubmit = func() {
-		if stringToEnter.Text != "" {
-			if len(imports) >= 1 {
-				for _, imps := range imports {
-					cmd.AddImport(imps)
-				}
-			}
-			cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"(\""+stringToEnter.Text+"\");")
-			HideModal()
-			SetNewContent()
-		} else {
-			dialog.NewError(errors.New("Must Enter Value"), GetWindow())
 		}
 	}
 
