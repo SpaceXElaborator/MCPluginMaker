@@ -1,4 +1,4 @@
-package PluginFunction
+package pluginfunctions
 
 import (
 	"errors"
@@ -18,6 +18,7 @@ var (
 	modal *widget.PopUp
 )
 
+// PlayerCommandFuncAddForm Creates a form to add a player based Java method to the commands PlayerFuncs to be exported and built in Java
 func PlayerCommandFuncAddForm(cmd *PluginCommands.Command, canvas *fyne.Canvas, window *fyne.Window, HideModal, ContentFunc func(), items []*PluginItems.CustomItem) *widget.Form {
 	funcForm := widget.NewForm()
 	cmdTypes := []string{"Add Item", "Add Custom Item", "Set Health", "Set Food Level", "Send Message", "Set Display Name", "Set Level", "Set Exp", "Set Max Health", "Set Gamemode"}
@@ -66,9 +67,11 @@ func PlayerCommandFuncAddForm(cmd *PluginCommands.Command, canvas *fyne.Canvas, 
 func playerFuncAddition(HideModal, ContentFunc func(), window *fyne.Window, cmd *PluginCommands.Command, addType, nameOf, enumVal, spigotFunction string, listValues, imports []string) *widget.Form {
 	form := widget.NewForm()
 
+	// Variables to be grabbed later for the creation of the function
 	var widgetToAdd fyne.CanvasObject
 	selectItemToSet := ""
 
+	// Only create an Entry widget if its an int, string, or float value. If it's a list, make sure to set widgetToAdd as a Select widget
 	if addType == "int" || addType == "string" || addType == "float" {
 		widgetToAdd = widget.NewEntry()
 	} else if addType == "list" {
@@ -77,6 +80,7 @@ func playerFuncAddition(HideModal, ContentFunc func(), window *fyne.Window, cmd 
 		})
 	}
 
+	// Hoping to use the value string to better help people determine what value needs to go in. Will make this more user friendly soon
 	if addType == "list" {
 		form.Append("Select", widgetToAdd)
 	} else {
@@ -85,20 +89,25 @@ func playerFuncAddition(HideModal, ContentFunc func(), window *fyne.Window, cmd 
 
 	form.OnSubmit = func() {
 		if addType == "list" {
+			// Lists will be usually assocciated with enums, so we need to make sure to add that kind of functionality when adding the PlayerFunc
 			if selectItemToSet != "" {
+				// Gets the list of imports and add it to the command
 				if len(imports) >= 1 {
 					for _, imps := range imports {
 						cmd.AddImport(imps)
 					}
 				}
 				cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+enumVal+".valueOf(\""+strings.ToUpper(selectItemToSet)+"\"));")
-				HideFuncModal()
+				hideFuncModal()
+
+				// ContentFunc is gathered from MainWindow to SetNewContent()
 				ContentFunc()
 			} else {
 				dialog.NewError(errors.New("Must Select Value"), *window)
 			}
 		} else {
 			if widgetToAdd.(*widget.Entry).Text != "" {
+				// For int/float. Need to make sure that the values are what they need to be. If so, add the function to the PlayerFunc
 				if addType == "int" {
 					if _, err := strconv.Atoi(widgetToAdd.(*widget.Entry).Text); err != nil {
 						return
@@ -113,12 +122,15 @@ func playerFuncAddition(HideModal, ContentFunc func(), window *fyne.Window, cmd 
 				} else {
 					cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"(\""+widgetToAdd.(*widget.Entry).Text+"\");")
 				}
+				// Gets the list of imports and add it to the command
 				if len(imports) >= 1 {
 					for _, imps := range imports {
 						cmd.AddImport(imps)
 					}
 				}
-				HideFuncModal()
+				hideFuncModal()
+
+				// ContentFunc is gathered from MainWindow to SetNewContent()
 				ContentFunc()
 			} else {
 				dialog.NewError(errors.New("Must Input Value"), *window)
@@ -127,18 +139,20 @@ func playerFuncAddition(HideModal, ContentFunc func(), window *fyne.Window, cmd 
 	}
 
 	form.OnCancel = func() {
-		HideFuncModal()
+		hideFuncModal()
 	}
 	form.Refresh()
 	return form
 }
 
+// SpawnItemForm for right now needs its own function until I can find a way to handle with multiple "." methods in Java. In this case, p."getInventory()".addItem()
 func spawnItemForm(ContentFunc func(), projItems []*PluginItems.CustomItem, window *fyne.Window, cmd *PluginCommands.Command, custom bool) *widget.Form {
 	itemForm := widget.NewForm()
 
 	itemName := ""
 
 	if custom {
+		// Create a Select widget that holds all of the CustomItems currently in the project
 		var items []string
 		for _, item := range projItems {
 			items = append(items, item.ItemName)
@@ -156,8 +170,11 @@ func spawnItemForm(ContentFunc func(), projItems []*PluginItems.CustomItem, wind
 			cmd.AddImport("import org.bukkit.inventory.ItemStack;")
 			if itemAmount.Text != "" && itemName != "" {
 				if _, err := strconv.Atoi(itemAmount.Text); err == nil {
+					// Get the CustomItem from the CustomItems.java file that is generated when you have custom items
 					cmd.AddPlayerFunc("Add Custom Item", "p.getInventory().addItem("+PluginSettings.GetCWP()+"CustomItems.build(\""+itemName+"\", "+itemAmount.Text+"));")
-					HideFuncModal()
+					hideFuncModal()
+
+					// ContentFunc is gathered from MainWindow to SetNewContent()
 					ContentFunc()
 				} else {
 					dialog.ShowError(errors.New("Amount must be a number"), *window)
@@ -167,7 +184,7 @@ func spawnItemForm(ContentFunc func(), projItems []*PluginItems.CustomItem, wind
 			}
 		}
 		itemForm.OnCancel = func() {
-			HideFuncModal()
+			hideFuncModal()
 		}
 		itemForm.Refresh()
 	} else {
@@ -178,16 +195,20 @@ func spawnItemForm(ContentFunc func(), projItems []*PluginItems.CustomItem, wind
 
 		itemForm.OnSubmit = func() {
 			if itemType.Text != "" && itemAmount.Text != "" {
+				// Check to make sure that the material is valid material
 				if PluginItems.CheckMaterial(itemType.Text) {
 					if _, err := strconv.Atoi(itemAmount.Text); err == nil {
+						// Create the new itemstack with the given material in Java code and add it to PlayerFunc
 						cmd.AddPlayerFunc("Add Item", "p.getInventory().addItem(new ItemStack(Material.valueOf(\""+strings.ToUpper(itemType.Text)+"\"), "+itemAmount.Text+"));")
-						HideFuncModal()
+						hideFuncModal()
+
+						// ContentFunc is gathered from MainWindow to SetNewContent()
 						ContentFunc()
 					} else {
 						dialog.ShowError(errors.New("Amount must be a number"), *window)
 					}
 				} else {
-					dialog.ShowError(errors.New("Item Doesn't Exist!"), *window)
+					dialog.ShowError(errors.New("Item Doesn't Exist"), *window)
 				}
 			} else {
 				dialog.ShowError(errors.New("Fill in all values"), *window)
@@ -195,7 +216,7 @@ func spawnItemForm(ContentFunc func(), projItems []*PluginItems.CustomItem, wind
 		}
 
 		itemForm.OnCancel = func() {
-			HideFuncModal()
+			hideFuncModal()
 		}
 
 		itemForm.Refresh()
@@ -203,6 +224,6 @@ func spawnItemForm(ContentFunc func(), projItems []*PluginItems.CustomItem, wind
 	return itemForm
 }
 
-func HideFuncModal() {
+func hideFuncModal() {
 	modal.Hide()
 }

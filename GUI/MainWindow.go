@@ -1,6 +1,7 @@
-package PluginGUI
+package plugingui
 
 import (
+	"log"
 	"strings"
 
 	"fyne.io/fyne/v2"
@@ -11,6 +12,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 
 	PluginFunction "SpaceXElaborator/PluginMaker/GUI/Functions"
+	PluginWidgets "SpaceXElaborator/PluginMaker/GUI/Widgets"
 	PluginProject "SpaceXElaborator/PluginMaker/Project"
 	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
 )
@@ -20,6 +22,7 @@ var (
 	a     fyne.App    = app.NewWithID("MCPluginMaker")
 	w     fyne.Window = a.NewWindow("MCPluginMaker | " + PluginSettings.GetAuthor())
 
+	// Projects will hold the pointer value of all the projects created from Main.go
 	Projects *PluginProject.Projects
 
 	list = widget.NewList(
@@ -35,17 +38,17 @@ var (
 	)
 )
 
+// ResetSettings will just retitle the Window and change the theme to dark/light
 func ResetSettings() {
 	w.SetTitle("MCPluginMaker | " + PluginSettings.GetAuthor())
 	if PluginSettings.GetDark() == true {
-		// GetApp() in MainWindow.go
 		a.Settings().SetTheme(theme.DarkTheme())
 	} else {
-		// GetApp() in MainWindow.go
 		a.Settings().SetTheme(theme.LightTheme())
 	}
 }
 
+// ShowMainMenu Creates the Main Window and will store the ability to view, build, delete, and add projects
 func ShowMainMenu(projs *PluginProject.Projects) {
 	Projects = projs
 
@@ -72,6 +75,7 @@ func ShowMainMenu(projs *PluginProject.Projects) {
 	w.ShowAndRun()
 }
 
+// SetNewContent Is a refresh function to update the Main Window Project menu when you add/remove anything from it
 func SetNewContent() {
 	apps := container.NewAppTabs(
 		container.NewTabItem("Commands",
@@ -80,7 +84,7 @@ func SetNewContent() {
 				nil,
 				nil,
 				nil,
-				CreateCommandBlocks(),
+				createCommandBlocks(),
 			),
 		),
 		container.NewTabItem("Listeners",
@@ -119,9 +123,11 @@ func SetNewContent() {
 	w.SetContent(c)
 }
 
-func CreateCommandBlocks() fyne.CanvasObject {
+// CreateCommandBlocks is a builder function to rebuild the Command card form a Projects Menu
+func createCommandBlocks() fyne.CanvasObject {
 	var test []fyne.CanvasObject
 
+	// Get all the project's commands and create a Toolbar that will ONLY affect that command
 	for _, f := range Projects.GetProject(PluginSettings.GetCWP()).Cmds {
 		toolbar := widget.NewToolbar(
 			widget.NewToolbarAction(theme.ContentAddIcon(), func() {
@@ -138,12 +144,22 @@ func CreateCommandBlocks() fyne.CanvasObject {
 			}),
 		)
 
+		// This will display all of the PlayerFuncs in a list for the user to be able to view
 		var accItems []*widget.AccordionItem
-
 		if len(f.PlayerFuncs) >= 1 {
 			playerFuncCont := container.NewVBox()
 			for _, playerFuncs := range f.PlayerFuncs {
-				playerFuncCont.Add(widget.NewLabel(playerFuncs.Name))
+				// Adds the custom widget made and will eventually allow you to edit the command by clicking on the label
+				playerFuncCont.Add(PluginWidgets.NewClickableLabel(
+					playerFuncs.Name,
+					// Debugging for the time being
+					func() {
+						log.Print("Left Clicked")
+					},
+					func() {
+						log.Print("Right Clicked")
+					},
+				))
 			}
 
 			accItems = append(accItems, widget.NewAccordionItem("Player Functions", playerFuncCont))
@@ -175,14 +191,17 @@ func CreateCommandBlocks() fyne.CanvasObject {
 	return content
 }
 
+// HideModal will hide the current modal displayed on the screen
 func HideModal() {
 	modal.Hide()
 }
 
+// GetApp returns the App for the ability to modify it
 func GetApp() fyne.App {
 	return a
 }
 
+// GetWindow returns the App's Window for the ability to modify it
 func GetWindow() fyne.Window {
 	return w
 }

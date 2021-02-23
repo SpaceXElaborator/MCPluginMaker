@@ -7,15 +7,13 @@ import (
 )
 
 var (
-	AllProjects = PluginProject.Projects{Projects: []*PluginProject.Project{}}
-
-	Test = "Hello"
+	allProjects = PluginProject.Projects{Projects: []*PluginProject.Project{}}
 )
 
 func main() {
-	PluginSettings.InitSettings(&AllProjects)
+	PluginSettings.InitSettings(&allProjects)
 	PluginSettings.CreateDirs()
 	PluginGUI.ResetSettings()
-	PluginGUI.ShowMainMenu(&AllProjects)
+	PluginGUI.ShowMainMenu(&allProjects)
 	PluginSettings.Save()
 }

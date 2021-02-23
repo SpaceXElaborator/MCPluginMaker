@@ -1,4 +1,4 @@
-package PluginGUI
+package plugingui
 
 import (
 	PluginItems "SpaceXElaborator/PluginMaker/Item"
@@ -11,6 +11,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+// customItemForm Generates a form and create a pluginitems.CustomItem to add to the project
 func customItemForm() *widget.Form {
 	itemNameEntry := widget.NewEntry()
 	itemNameEntry.Resize(fyne.NewSize(300, 300))
@@ -41,6 +42,8 @@ func customItemForm() *widget.Form {
 		if itemNameEntry.Text != "" && itemMaterialEntry.Text != "" {
 			proj := Projects.GetProject(PluginSettings.GetCWP())
 			if proj.CheckItem(itemNameEntry.Text) != true {
+				// Make sure that the material that was typed in the value is a valid Spigot Material type.
+				// Couldn't make this be a list as it was largly lagging, will have to look into this later
 				stringToCheck := strings.ReplaceAll(strings.ToUpper(itemMaterialEntry.Text), " ", "_")
 				if PluginItems.CheckMaterial(itemNameEntry.Text) {
 					proj.AddItem(strings.ToUpper(stringToCheck), itemNameEntry.Text, strings.Split(itemDescEntry.Text, "\n"))

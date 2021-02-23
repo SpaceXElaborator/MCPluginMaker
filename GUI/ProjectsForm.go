@@ -1,29 +1,30 @@
-package PluginGUI
+package plugingui
 
 import (
+	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
+
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/widget"
 	"fyne.io/fyne/v2/dialog"
-	
-	"SpaceXElaborator/PluginMaker/Settings"
+	"fyne.io/fyne/v2/widget"
 )
 
+// delProjectForm Generates a form to select a project from the list to delete it. Currently, there is no warning, it will just delete
 func delProjectForm() *widget.Form {
 	ProjNames := []string{}
 	for _, f := range Projects.Projects {
 		ProjNames = append(ProjNames, f.Name)
 	}
-	
+
 	ProjName := ""
-	
+
 	projNameEntry := widget.NewSelect(ProjNames, func(s string) {
 		ProjName = s
 	})
-	projNameFormItem := &widget.FormItem {
-		Text: "Project Name",
+	projNameFormItem := &widget.FormItem{
+		Text:   "Project Name",
 		Widget: projNameEntry,
 	}
-	
+
 	remCommandForm := widget.NewForm(projNameFormItem)
 	remCommandForm.OnSubmit = func() {
 		if ProjName != "" {
@@ -32,44 +33,45 @@ func delProjectForm() *widget.Form {
 			HideModal()
 		}
 	}
-	
+
 	remCommandForm.OnCancel = func() {
 		HideModal()
 	}
-	
+
 	return remCommandForm
 }
 
+// createNewProjectForm Generates a form to create a project given the Name, Group ID, Artifact ID, and Description in order to create a pom.xml
 func createNewProjectForm() *widget.Form {
 	projectNameEntry := widget.NewEntry()
 	projectNameEntry.Resize(fyne.NewSize(300, 300))
 	projectNameEntry.SetText("")
-	projectNameFormItem := &widget.FormItem {
-		Text: "Project Name",
+	projectNameFormItem := &widget.FormItem{
+		Text:   "Project Name",
 		Widget: projectNameEntry,
 	}
-	
+
 	projectGroupEntry := widget.NewEntry()
 	projectGroupEntry.Resize(fyne.NewSize(300, 300))
 	projectGroupEntry.SetText("")
-	projectGroupFormItem := &widget.FormItem {
-		Text: "Group ID",
+	projectGroupFormItem := &widget.FormItem{
+		Text:   "Group ID",
 		Widget: projectGroupEntry,
 	}
-	
+
 	projectArtifactEntry := widget.NewEntry()
 	projectArtifactEntry.Resize(fyne.NewSize(300, 300))
 	projectArtifactEntry.SetText("")
-	projectArtifactFormItem := &widget.FormItem {
-		Text: "Artifact ID",
+	projectArtifactFormItem := &widget.FormItem{
+		Text:   "Artifact ID",
 		Widget: projectArtifactEntry,
 	}
-	
+
 	projectDescriptionEntry := widget.NewEntry()
 	projectDescriptionEntry.Resize(fyne.NewSize(300, 300))
 	projectDescriptionEntry.SetText("")
-	projectDescriptionFormItem := &widget.FormItem {
-		Text: "Description",
+	projectDescriptionFormItem := &widget.FormItem{
+		Text:   "Description",
 		Widget: projectDescriptionEntry,
 	}
 

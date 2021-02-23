@@ -1,4 +1,4 @@
-package PluginGUI
+package plugingui
 
 import (
 	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
@@ -8,7 +8,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-// Create the top bar for creating projects, deleting projects, and the settings
+// createToolbar Create the top bar for creating projects, deleting projects, and the settings
 func createToolbar() *widget.Toolbar {
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.FolderNewIcon(), func() {
@@ -41,6 +41,7 @@ func createToolbar() *widget.Toolbar {
 	return toolbar
 }
 
+// createCmdToolbar Creates the +/- button for adding or removing commands in the Command Tab
 func createCmdToolbar() *widget.Toolbar {
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
@@ -59,6 +60,7 @@ func createCmdToolbar() *widget.Toolbar {
 	return toolbar
 }
 
+// createItemToolbar Creates the +/- button for adding or removing items in the Item Tab
 func createItemToolbar() *widget.Toolbar {
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.ContentAddIcon(), func() {

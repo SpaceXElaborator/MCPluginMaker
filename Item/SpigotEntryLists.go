@@ -1,9 +1,9 @@
-package PluginItems
+package pluginitems
 
 import "strings"
 
 var (
-	SpigotMaterialList = []string{
+	spigotMaterialList = []string{
 		"STONE",
 		"GRANITE",
 		"POLISHED_GRANITE",
@@ -1083,8 +1083,9 @@ var (
 	}
 )
 
+// CheckMaterial takes a string and makes sure it is a valid material in the Spigot Material enum
 func CheckMaterial(a string) bool {
-	for _, item := range SpigotMaterialList {
+	for _, item := range spigotMaterialList {
 		if strings.EqualFold(a, item) {
 			return true
 		}
