@@ -154,7 +154,8 @@ func InitSettings(projs *PluginProject.Projects) {
 				createdCmd := newProj.GetCommand(cmd.Name()[0 : len(cmd.Name())-5])
 
 				for _, v := range funcsInCmd {
-					createdCmd.AddPlayerFunc(v[1])
+					cmdFuncString := strings.Split(v[1], "||")
+					createdCmd.AddPlayerFunc(cmdFuncString[0], cmdFuncString[1])
 				}
 			}
 		}
