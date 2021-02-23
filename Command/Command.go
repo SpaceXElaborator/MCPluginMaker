@@ -12,6 +12,6 @@ type Command struct {
 	PlayerFuncs  []*PluginFunction.Function
 }
 
-func (cmd *Command) AddPlayerFunc(strFunc string) {
-	cmd.PlayerFuncs = append(cmd.PlayerFuncs, &PluginFunction.Function{Func: strFunc})
+func (cmd *Command) AddPlayerFunc(name, strFunc string) {
+	cmd.PlayerFuncs = append(cmd.PlayerFuncs, &PluginFunction.Function{Name: name, Func: strFunc})
 }
