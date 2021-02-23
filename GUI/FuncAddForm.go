@@ -41,6 +41,10 @@ func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
 
 	funcForm.AppendItem(cmdFuncTypeFormItem)
 
+	funcForm.OnCancel = func() {
+		HideModal()
+	}
+	funcForm.Refresh()
 	return funcForm
 }
 
