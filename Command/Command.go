@@ -2,6 +2,7 @@ package PluginCommands
 
 import (
 	PluginFunction "SpaceXElaborator/PluginMaker/Function"
+	"strings"
 )
 
 type Command struct {
@@ -18,5 +19,11 @@ func (cmd *Command) AddPlayerFunc(name, strFunc string) {
 }
 
 func (cmd *Command) AddImport(imp string) {
+	for _, str := range cmd.PluginImports {
+		if strings.EqualFold(str, imp) {
+			return
+		}
+	}
+
 	cmd.PluginImports = append(cmd.PluginImports, imp)
 }
