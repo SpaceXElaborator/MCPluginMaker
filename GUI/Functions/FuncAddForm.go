@@ -1,4 +1,4 @@
-package PluginGUI
+package PluginFunction
 
 import (
 	"errors"
@@ -10,35 +10,40 @@ import (
 	"fyne.io/fyne/v2/widget"
 
 	PluginCommands "SpaceXElaborator/PluginMaker/Command"
+	PluginItems "SpaceXElaborator/PluginMaker/Item"
 	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
 )
 
-func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
+var (
+	modal *widget.PopUp
+)
+
+func PlayerCommandFuncAddForm(cmd *PluginCommands.Command, canvas *fyne.Canvas, window *fyne.Window, HideModal, ContentFunc func(), items []*PluginItems.CustomItem) *widget.Form {
 	funcForm := widget.NewForm()
 	cmdTypes := []string{"Add Item", "Add Custom Item", "Set Health", "Set Food Level", "Send Message", "Set Display Name", "Set Level", "Set Exp", "Set Max Health", "Set Gamemode"}
 
 	cmdFuncType := widget.NewSelect(cmdTypes, func(s string) {
-		modal.Hide()
+		HideModal()
 		if s == "Add Custom Item" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", spawnItemForm(cmd, true)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", spawnItemForm(ContentFunc, items, window, cmd, true)), *canvas)
 		} else if s == "Add Item" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", spawnItemForm(cmd, false)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", spawnItemForm(ContentFunc, items, window, cmd, false)), *canvas)
 		} else if s == "Send Message" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "string", "Send Message", "", "sendMessage", nil, nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "string", "Send Message", "", "sendMessage", nil, nil)), *canvas)
 		} else if s == "Set Display Name" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "string", "Set Name", "", "setDisplayName", nil, nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "string", "Set Name", "", "setDisplayName", nil, nil)), *canvas)
 		} else if s == "Set Level" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "int", "Set Level", "", "setLevel", nil, nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "int", "Set Level", "", "setLevel", nil, nil)), *canvas)
 		} else if s == "Set Exp" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "float", "Set Exp", "", "setExp", nil, nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "float", "Set Exp", "", "setExp", nil, nil)), *canvas)
 		} else if s == "Set Max Health" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "float", "Set Max Health", "", "setMaxHealth", nil, nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "float", "Set Max Health", "", "setMaxHealth", nil, nil)), *canvas)
 		} else if s == "Set Health" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "float", "Set Health", "", "setHealth", nil, nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "float", "Set Health", "", "setHealth", nil, nil)), *canvas)
 		} else if s == "Set Food Level" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "int", "Set Food", "", "setFoodLevel", nil, nil)), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "int", "Set Food", "", "setFoodLevel", nil, nil)), *canvas)
 		} else if s == "Set Gamemode" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(cmd, "list", "Set Gamemode", "GameMode", "setGameMode", []string{"Survival", "Creative", "Adventure", "Spectator"}, []string{"import org.bukkit.GameMode;"})), w.Canvas())
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "list", "Set Gamemode", "GameMode", "setGameMode", []string{"Survival", "Creative", "Adventure", "Spectator"}, []string{"import org.bukkit.GameMode;"})), *canvas)
 		}
 		modal.Resize(fyne.NewSize(512, 0))
 		modal.Show()
@@ -58,7 +63,7 @@ func playerCommandFuncAddForm(cmd *PluginCommands.Command) *widget.Form {
 	return funcForm
 }
 
-func playerFuncAddition(cmd *PluginCommands.Command, addType, nameOf, enumVal, spigotFunction string, listValues, imports []string) *widget.Form {
+func playerFuncAddition(HideModal, ContentFunc func(), window *fyne.Window, cmd *PluginCommands.Command, addType, nameOf, enumVal, spigotFunction string, listValues, imports []string) *widget.Form {
 	form := widget.NewForm()
 
 	var widgetToAdd fyne.CanvasObject
@@ -87,10 +92,10 @@ func playerFuncAddition(cmd *PluginCommands.Command, addType, nameOf, enumVal, s
 					}
 				}
 				cmd.AddPlayerFunc(nameOf, "p."+spigotFunction+"("+enumVal+".valueOf(\""+strings.ToUpper(selectItemToSet)+"\"));")
-				HideModal()
-				SetNewContent()
+				HideFuncModal()
+				ContentFunc()
 			} else {
-				dialog.NewError(errors.New("Must Select Value"), GetWindow())
+				dialog.NewError(errors.New("Must Select Value"), *window)
 			}
 		} else {
 			if widgetToAdd.(*widget.Entry).Text != "" {
@@ -113,31 +118,29 @@ func playerFuncAddition(cmd *PluginCommands.Command, addType, nameOf, enumVal, s
 						cmd.AddImport(imps)
 					}
 				}
-				HideModal()
-				SetNewContent()
+				HideFuncModal()
+				ContentFunc()
 			} else {
-				dialog.NewError(errors.New("Must Input Value"), GetWindow())
+				dialog.NewError(errors.New("Must Input Value"), *window)
 			}
 		}
 	}
 
 	form.OnCancel = func() {
-		HideModal()
+		HideFuncModal()
 	}
 	form.Refresh()
 	return form
 }
 
-func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
+func spawnItemForm(ContentFunc func(), projItems []*PluginItems.CustomItem, window *fyne.Window, cmd *PluginCommands.Command, custom bool) *widget.Form {
 	itemForm := widget.NewForm()
 
 	itemName := ""
 
-	proj := Projects.GetProject(PluginSettings.GetCWP())
-
 	if custom {
 		var items []string
-		for _, item := range proj.Items {
+		for _, item := range projItems {
 			items = append(items, item.ItemName)
 		}
 		cmdFuncType := widget.NewSelect(items, func(s string) {
@@ -154,17 +157,17 @@ func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 			if itemAmount.Text != "" && itemName != "" {
 				if _, err := strconv.Atoi(itemAmount.Text); err == nil {
 					cmd.AddPlayerFunc("Add Custom Item", "p.getInventory().addItem("+PluginSettings.GetCWP()+"CustomItems.build(\""+itemName+"\", "+itemAmount.Text+"));")
-					HideModal()
-					SetNewContent()
+					HideFuncModal()
+					ContentFunc()
 				} else {
-					dialog.ShowError(errors.New("Amount must be a number"), GetWindow())
+					dialog.ShowError(errors.New("Amount must be a number"), *window)
 				}
 			} else {
-				dialog.ShowError(errors.New("Fill in all values"), GetWindow())
+				dialog.ShowError(errors.New("Fill in all values"), *window)
 			}
 		}
 		itemForm.OnCancel = func() {
-			HideModal()
+			HideFuncModal()
 		}
 		itemForm.Refresh()
 	} else {
@@ -175,27 +178,31 @@ func spawnItemForm(cmd *PluginCommands.Command, custom bool) *widget.Form {
 
 		itemForm.OnSubmit = func() {
 			if itemType.Text != "" && itemAmount.Text != "" {
-				if proj.CheckMaterial(itemType.Text) {
+				if PluginItems.CheckMaterial(itemType.Text) {
 					if _, err := strconv.Atoi(itemAmount.Text); err == nil {
 						cmd.AddPlayerFunc("Add Item", "p.getInventory().addItem(new ItemStack(Material.valueOf(\""+strings.ToUpper(itemType.Text)+"\"), "+itemAmount.Text+"));")
-						HideModal()
-						SetNewContent()
+						HideFuncModal()
+						ContentFunc()
 					} else {
-						dialog.ShowError(errors.New("Amount must be a number"), GetWindow())
+						dialog.ShowError(errors.New("Amount must be a number"), *window)
 					}
 				} else {
-					dialog.ShowError(errors.New("Item Doesn't Exist!"), GetWindow())
+					dialog.ShowError(errors.New("Item Doesn't Exist!"), *window)
 				}
 			} else {
-				dialog.ShowError(errors.New("Fill in all values"), GetWindow())
+				dialog.ShowError(errors.New("Fill in all values"), *window)
 			}
 		}
 
 		itemForm.OnCancel = func() {
-			HideModal()
+			HideFuncModal()
 		}
 
 		itemForm.Refresh()
 	}
 	return itemForm
+}
+
+func HideFuncModal() {
+	modal.Hide()
 }
