@@ -2,21 +2,22 @@ package PluginGUI
 
 import (
 	"strings"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 	"fyne.io/fyne/v2/layout"
-	
-	"SpaceXElaborator/PluginMaker/Settings"
-	"SpaceXElaborator/PluginMaker/Project"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
+
+	PluginProject "SpaceXElaborator/PluginMaker/Project"
+	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
 )
 
 var (
 	modal *widget.PopUp
-	a fyne.App = app.NewWithID("MCPluginMaker")
-	w fyne.Window = a.NewWindow("MCPluginMaker | " + PluginSettings.GetAuthor())
+	a     fyne.App    = app.NewWithID("MCPluginMaker")
+	w     fyne.Window = a.NewWindow("MCPluginMaker | " + PluginSettings.GetAuthor())
 
 	Projects *PluginProject.Projects
 
@@ -58,7 +59,7 @@ func ShowMainMenu(projs *PluginProject.Projects) {
 		nil,
 		split,
 	)
-	
+
 	list.OnSelected = func(id widget.ListItemID) {
 		PluginSettings.SetCWP(projs.Projects[id].Name)
 		w.SetTitle("MCPluginMaker | " + PluginSettings.GetAuthor())
@@ -72,7 +73,7 @@ func ShowMainMenu(projs *PluginProject.Projects) {
 
 func SetNewContent() {
 	apps := container.NewAppTabs(
-		container.NewTabItem("Commands", 
+		container.NewTabItem("Commands",
 			container.NewBorder(
 				createCmdToolbar(),
 				nil,
@@ -81,7 +82,7 @@ func SetNewContent() {
 				CreateCommandBlocks(),
 			),
 		),
-		container.NewTabItem("Listeners", 
+		container.NewTabItem("Listeners",
 			container.NewBorder(
 				nil, // TODO: Add Listener Toolbar
 				nil,
@@ -90,7 +91,7 @@ func SetNewContent() {
 				widget.NewLabel("Not Impleted Yet... Come Back Later"),
 			),
 		),
-		container.NewTabItem("Items", 
+		container.NewTabItem("Items",
 			container.NewBorder(
 				createItemToolbar(),
 				nil,
@@ -100,12 +101,12 @@ func SetNewContent() {
 			),
 		),
 	)
-	
-	card := widget.NewCard("Project: " + PluginSettings.GetCWP(), "", apps)
+
+	card := widget.NewCard("Project: "+PluginSettings.GetCWP(), "", apps)
 	toolbar := createToolbar()
 	split := container.NewHSplit(list, card)
 	split.Offset = 0.1
-	
+
 	c := container.NewBorder(
 		toolbar,
 		nil,
@@ -113,13 +114,13 @@ func SetNewContent() {
 		nil,
 		split,
 	)
-	
+
 	w.SetContent(c)
 }
 
 func CreateCommandBlocks() fyne.CanvasObject {
 	var test []fyne.CanvasObject
-	
+
 	for _, f := range Projects.GetProject(PluginSettings.GetCWP()).Cmds {
 		toolbar := widget.NewToolbar(
 			widget.NewToolbarAction(theme.ContentAddIcon(), func() {
@@ -131,12 +132,21 @@ func CreateCommandBlocks() fyne.CanvasObject {
 				}
 			}),
 			widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
-				
+
 			}),
 		)
-		
+
 		var accItems []*widget.AccordionItem
-		
+
+		if len(f.PlayerFuncs) >= 1 {
+			playerFuncCont := container.NewVBox()
+			for _, playerFuncs := range f.PlayerFuncs {
+				playerFuncCont.Add(widget.NewLabel(playerFuncs.Name))
+			}
+
+			accItems = append(accItems, widget.NewAccordionItem("Player Functions", playerFuncCont))
+		}
+
 		max := container.NewBorder(
 			toolbar,
 			nil,
@@ -144,22 +154,22 @@ func CreateCommandBlocks() fyne.CanvasObject {
 			nil,
 			container.NewVScroll(
 				widget.NewAccordion(
-					accItems...
+					accItems...,
 				),
 			),
 		)
-	
+
 		cont := widget.NewCard("", "Functions", max)
-		
+
 		card := widget.NewCard(
-			f.CommandType + " Command",
-			"/" + f.SlashCommand,
+			f.CommandType+" Command",
+			"/"+f.SlashCommand,
 			cont,
 		)
 		test = append(test, card)
 	}
-	
-	content := container.NewVScroll(container.NewGridWrap(fyne.NewSize(270, 290), test...))
+
+	content := container.NewVScroll(container.NewGridWrap(fyne.NewSize(300, 350), test...))
 	return content
 }
 
