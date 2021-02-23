@@ -1,37 +1,38 @@
 package PluginGUI
 
 import (
-	"strings"
+	PluginItems "SpaceXElaborator/PluginMaker/Item"
+	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
 	"errors"
+	"strings"
+
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/widget"
 	"fyne.io/fyne/v2/dialog"
-	
-	"SpaceXElaborator/PluginMaker/Settings"
+	"fyne.io/fyne/v2/widget"
 )
 
 func customItemForm() *widget.Form {
 	itemNameEntry := widget.NewEntry()
 	itemNameEntry.Resize(fyne.NewSize(300, 300))
 	itemNameEntry.SetText("")
-	itemNameFormItem := &widget.FormItem {
-		Text: "Item Name",
+	itemNameFormItem := &widget.FormItem{
+		Text:   "Item Name",
 		Widget: itemNameEntry,
 	}
-	
+
 	itemMaterialEntry := widget.NewEntry()
 	itemMaterialEntry.Resize(fyne.NewSize(300, 300))
 	itemMaterialEntry.SetText("")
-	itemMaterialFormItem := &widget.FormItem {
-		Text: "Item Material",
+	itemMaterialFormItem := &widget.FormItem{
+		Text:   "Item Material",
 		Widget: itemMaterialEntry,
 	}
-	
+
 	itemDescEntry := widget.NewMultiLineEntry()
 	itemDescEntry.Resize(fyne.NewSize(300, 300))
 	itemDescEntry.SetText("")
-	itemDescFormItem := &widget.FormItem {
-		Text: "Item Description",
+	itemDescFormItem := &widget.FormItem{
+		Text:   "Item Description",
 		Widget: itemDescEntry,
 	}
 
@@ -41,7 +42,7 @@ func customItemForm() *widget.Form {
 			proj := Projects.GetProject(PluginSettings.GetCWP())
 			if proj.CheckItem(itemNameEntry.Text) != true {
 				stringToCheck := strings.ReplaceAll(strings.ToUpper(itemMaterialEntry.Text), " ", "_")
-				if(proj.CheckMaterial(stringToCheck)) {
+				if PluginItems.CheckMaterial(itemNameEntry.Text) {
 					proj.AddItem(strings.ToUpper(stringToCheck), itemNameEntry.Text, strings.Split(itemDescEntry.Text, "\n"))
 					// HideModal() in MainWindow.go
 					HideModal()
