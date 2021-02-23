@@ -10,6 +10,7 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
+	PluginFunction "SpaceXElaborator/PluginMaker/GUI/Functions"
 	PluginProject "SpaceXElaborator/PluginMaker/Project"
 	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
 )
@@ -125,7 +126,8 @@ func CreateCommandBlocks() fyne.CanvasObject {
 		toolbar := widget.NewToolbar(
 			widget.NewToolbarAction(theme.ContentAddIcon(), func() {
 				if strings.EqualFold(f.CommandType, "Player") {
-					funcForm := playerCommandFuncAddForm(f)
+					canvas := w.Canvas()
+					funcForm := PluginFunction.PlayerCommandFuncAddForm(f, &canvas, &w, HideModal, SetNewContent, Projects.GetProject(PluginSettings.CWP).Items)
 					modal = widget.NewModalPopUp(widget.NewCard("Add Command Function", "", funcForm), w.Canvas())
 					modal.Resize(fyne.NewSize(512, 0))
 					modal.Show()
