@@ -13,6 +13,7 @@ import (
 
 	PluginFunction "SpaceXElaborator/PluginMaker/GUI/Functions"
 	PluginWidgets "SpaceXElaborator/PluginMaker/GUI/Widgets"
+	pluginwidgets "SpaceXElaborator/PluginMaker/GUI/Widgets"
 	PluginProject "SpaceXElaborator/PluginMaker/Project"
 	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
 )
@@ -165,9 +166,12 @@ func createCommandBlocks() fyne.CanvasObject {
 			accItems = append(accItems, widget.NewAccordionItem("Player Functions", playerFuncCont))
 		}
 
+		canv := w.Canvas()
+		testWork := pluginwidgets.NewTypeSearchableList(&canv)
+
 		max := container.NewBorder(
 			toolbar,
-			nil,
+			testWork,
 			nil,
 			nil,
 			container.NewVScroll(

@@ -1,60 +1,31 @@
 package pluginwidgets
 
 import (
+	"log"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 )
 
 type TypeSearchableList struct {
-	widget.BaseWidget
-	Text  string
-	Items []string
+	*widget.Entry
+	Canvas *fyne.Canvas
 }
 
-func NewTypeSearchableList(text string, items []string) *TypeSearchableList {
+func NewTypeSearchableList(canv *fyne.Canvas) *TypeSearchableList {
 	tsl := &TypeSearchableList{
-		Text:  text,
-		Items: items,
+		widget.NewEntry(),
+		canv,
 	}
 	return tsl
 }
 
-func (tsl *TypeSearchableList) Refresh() {
-	tsl.BaseWidget.Refresh()
-}
-
-func (tsl *TypeSearchableList) CreateRenderer() fyne.WidgetRenderer {
-	tsl.ExtendBaseWidget(tsl)
-
-	r := &typeSearchableListRenderer{
-		tsl,
-		[]fyne.CanvasObject{},
+func (tsl *TypeSearchableList) KeyUp(key *fyne.KeyEvent) {
+	if len(tsl.Text) >= 3 {
+		log.Print(tsl.Text)
+		log.Print(tsl.Position())
+		modal := widget.NewPopUp(widget.NewLabel("Test"), *tsl.Canvas)
+		modal.Move(tsl.Position())
+		modal.Show()
 	}
-	return r
-}
-
-type typeSearchableListRenderer struct {
-	tsl *TypeSearchableList
-
-	objects []fyne.CanvasObject
-}
-
-func (tslr *typeSearchableListRenderer) Layout(size fyne.Size) {
-
-}
-
-func (tslr *typeSearchableListRenderer) Objects() []fyne.CanvasObject {
-	return tslr.objects
-}
-
-func (tslr *typeSearchableListRenderer) MinSize() fyne.Size {
-	return fyne.NewSize(200, 300)
-}
-
-func (tslr *typeSearchableListRenderer) Destroy() {
-
-}
-
-func (tslr *typeSearchableListRenderer) Refresh() {
-
 }
