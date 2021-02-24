@@ -8,7 +8,7 @@ import (
 // ClickableLabel will create a label using a basic widget.Label but add left/right click funcionality
 type ClickableLabel struct {
 	*widget.Label
-	OnTapped          func() //`json:"-"`
+	OnDoubleTapped    func() //`json:"-"`
 	OnTappedSecondary func() //`json:"-"`
 }
 
@@ -27,9 +27,9 @@ func (cl *ClickableLabel) TappedSecondary(pe *fyne.PointEvent) {
 	}
 }
 
-// Tapped Is a Fyne method to check for left clicking
-func (cl *ClickableLabel) Tapped(pe *fyne.PointEvent) {
-	if cl.OnTapped != nil {
-		cl.OnTapped()
+// DoubleTapped Is a Fyne method to check for double clicking
+func (cl *ClickableLabel) DoubleTapped(pe *fyne.PointEvent) {
+	if cl.OnDoubleTapped != nil {
+		cl.OnDoubleTapped()
 	}
 }

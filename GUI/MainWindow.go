@@ -154,7 +154,7 @@ func createCommandBlocks() fyne.CanvasObject {
 					playerFuncs.Name,
 					// Debugging for the time being
 					func() {
-						log.Print("Left Clicked")
+						log.Print("Double Clicked")
 					},
 					func() {
 						log.Print("Right Clicked")
