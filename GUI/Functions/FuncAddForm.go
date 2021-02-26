@@ -15,11 +15,22 @@ import (
 )
 
 var (
-	modal *widget.PopUp
+	modal  *widget.PopUp
+	canvas *fyne.Canvas
+	window *fyne.Window
 )
 
+type valueType struct {
+	values []string
+}
+
+func InitCommands(canv *fyne.Canvas, win *fyne.Window) {
+	canvas = canv
+	window = win
+}
+
 // PlayerCommandFuncAddForm Creates a form to add a player based Java method to the commands PlayerFuncs to be exported and built in Java
-func PlayerCommandFuncAddForm(cmd *PluginCommands.Command, canvas *fyne.Canvas, window *fyne.Window, HideModal, ContentFunc func(), items []*PluginItems.CustomItem) *widget.Form {
+func PlayerCommandFuncAddForm(cmd *PluginCommands.Command, HideModal, ContentFunc func(), items []*PluginItems.CustomItem) *widget.Form {
 	funcForm := widget.NewForm()
 	cmdTypes := []string{"Add Item", "Add Custom Item", "Set Health", "Set Food Level", "Send Message", "Set Display Name", "Set Level", "Set Exp", "Set Max Health", "Set Gamemode"}
 
@@ -30,21 +41,21 @@ func PlayerCommandFuncAddForm(cmd *PluginCommands.Command, canvas *fyne.Canvas, 
 		} else if s == "Add Item" {
 			modal = widget.NewModalPopUp(widget.NewCard(s, "", spawnItemForm(ContentFunc, items, window, cmd, false)), *canvas)
 		} else if s == "Send Message" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "string", "Send Message", "", "sendMessage", nil, nil)), *canvas)
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(ContentFunc, cmd, "string", "Send Message", "", "sendMessage", nil, nil)), *canvas)
 		} else if s == "Set Display Name" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "string", "Set Name", "", "setDisplayName", nil, nil)), *canvas)
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(ContentFunc, cmd, "string", "Set Name", "", "setDisplayName", nil, nil)), *canvas)
 		} else if s == "Set Level" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "int", "Set Level", "", "setLevel", nil, nil)), *canvas)
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(ContentFunc, cmd, "int", "Set Level", "", "setLevel", nil, nil)), *canvas)
 		} else if s == "Set Exp" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "float", "Set Exp", "", "setExp", nil, nil)), *canvas)
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(ContentFunc, cmd, "float", "Set Exp", "", "setExp", nil, nil)), *canvas)
 		} else if s == "Set Max Health" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "float", "Set Max Health", "", "setMaxHealth", nil, nil)), *canvas)
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(ContentFunc, cmd, "float", "Set Max Health", "", "setMaxHealth", nil, nil)), *canvas)
 		} else if s == "Set Health" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "float", "Set Health", "", "setHealth", nil, nil)), *canvas)
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(ContentFunc, cmd, "float", "Set Health", "", "setHealth", nil, nil)), *canvas)
 		} else if s == "Set Food Level" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "int", "Set Food", "", "setFoodLevel", nil, nil)), *canvas)
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(ContentFunc, cmd, "int", "Set Food", "", "setFoodLevel", nil, nil)), *canvas)
 		} else if s == "Set Gamemode" {
-			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(HideModal, ContentFunc, window, cmd, "list", "Set Gamemode", "GameMode", "setGameMode", []string{"Survival", "Creative", "Adventure", "Spectator"}, []string{"import org.bukkit.GameMode;"})), *canvas)
+			modal = widget.NewModalPopUp(widget.NewCard(s, "", playerFuncAddition(ContentFunc, cmd, "list", "Set Gamemode", "GameMode", "setGameMode", []string{"Survival", "Creative", "Adventure", "Spectator"}, []string{"import org.bukkit.GameMode;"})), *canvas)
 		}
 		modal.Resize(fyne.NewSize(512, 0))
 		modal.Show()
@@ -64,7 +75,7 @@ func PlayerCommandFuncAddForm(cmd *PluginCommands.Command, canvas *fyne.Canvas, 
 	return funcForm
 }
 
-func playerFuncAddition(HideModal, ContentFunc func(), window *fyne.Window, cmd *PluginCommands.Command, addType, nameOf, enumVal, spigotFunction string, listValues, imports []string) *widget.Form {
+func playerFuncAddition(ContentFunc func(), cmd *PluginCommands.Command, addType, nameOf, enumVal, spigotFunction string, listValues, imports []string) *widget.Form {
 	form := widget.NewForm()
 
 	// Variables to be grabbed later for the creation of the function

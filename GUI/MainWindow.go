@@ -13,7 +13,6 @@ import (
 
 	PluginFunction "SpaceXElaborator/PluginMaker/GUI/Functions"
 	PluginWidgets "SpaceXElaborator/PluginMaker/GUI/Widgets"
-	pluginwidgets "SpaceXElaborator/PluginMaker/GUI/Widgets"
 	PluginProject "SpaceXElaborator/PluginMaker/Project"
 	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
 )
@@ -73,6 +72,10 @@ func ShowMainMenu(projs *PluginProject.Projects) {
 
 	w.Resize(fyne.NewSize(1024, 768))
 	w.SetContent(c)
+
+	canvas := w.Canvas()
+	PluginFunction.InitCommands(&canvas, &w)
+
 	w.ShowAndRun()
 }
 
@@ -133,8 +136,7 @@ func createCommandBlocks() fyne.CanvasObject {
 		toolbar := widget.NewToolbar(
 			widget.NewToolbarAction(theme.ContentAddIcon(), func() {
 				if strings.EqualFold(f.CommandType, "Player") {
-					canvas := w.Canvas()
-					funcForm := PluginFunction.PlayerCommandFuncAddForm(f, &canvas, &w, HideModal, SetNewContent, Projects.GetProject(PluginSettings.CWP).Items)
+					funcForm := PluginFunction.PlayerCommandFuncAddForm(f, HideModal, SetNewContent, Projects.GetProject(PluginSettings.CWP).Items)
 					modal = widget.NewModalPopUp(widget.NewCard("Add Command Function", "", funcForm), w.Canvas())
 					modal.Resize(fyne.NewSize(512, 0))
 					modal.Show()
@@ -166,12 +168,9 @@ func createCommandBlocks() fyne.CanvasObject {
 			accItems = append(accItems, widget.NewAccordionItem("Player Functions", playerFuncCont))
 		}
 
-		canv := w.Canvas()
-		testWork := pluginwidgets.NewTypeSearchableList(&canv)
-
 		max := container.NewBorder(
 			toolbar,
-			testWork,
+			nil,
 			nil,
 			nil,
 			container.NewVScroll(
