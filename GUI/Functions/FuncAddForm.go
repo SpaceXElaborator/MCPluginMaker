@@ -24,13 +24,14 @@ type valueType struct {
 	values []string
 }
 
+// Going to be used to create some variables that will be used for creating commands+
 func InitCommands(canv *fyne.Canvas, win *fyne.Window) {
 	canvas = canv
 	window = win
 }
 
 // PlayerCommandFuncAddForm Creates a form to add a player based Java method to the commands PlayerFuncs to be exported and built in Java
-func PlayerCommandFuncAddForm(cmd *PluginCommands.Command, HideModal, ContentFunc func(), items []*PluginItems.CustomItem) *widget.Form {
+func playerCommandFuncAddForm(cmd *PluginCommands.Command, HideModal, ContentFunc func(), items []*PluginItems.CustomItem) *widget.Form {
 	funcForm := widget.NewForm()
 	cmdTypes := []string{"Add Item", "Add Custom Item", "Set Health", "Set Food Level", "Send Message", "Set Display Name", "Set Level", "Set Exp", "Set Max Health", "Set Gamemode"}
 
