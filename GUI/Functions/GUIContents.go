@@ -35,11 +35,12 @@ func BuildCmdCard(cmd *PluginCommands.Command) []*widget.AccordionItem {
 	var accItems []*widget.AccordionItem
 	if len(cmd.SubCommands) >= 1 {
 		subCommandCont := container.NewVBox()
-		for _, subCommands := range cmd.SubCommands {
+		for index, _ := range cmd.SubCommands {
+			subCmd := cmd.SubCommands[index]
 			subCommandCont.Add(PluginWidgets.NewClickableLabel(
-				subCommands.SlashCommand,
+				subCmd.SlashCommand,
 				func() {
-					log.Print(subCommands.Name)
+					log.Print(subCmd.Name)
 				},
 				func() {
 					log.Print("Right Clicked")
@@ -52,13 +53,15 @@ func BuildCmdCard(cmd *PluginCommands.Command) []*widget.AccordionItem {
 
 	if len(cmd.PlayerFuncs) >= 1 {
 		playerFuncCont := container.NewVBox()
-		for _, playerFuncs := range cmd.PlayerFuncs {
+		for index, _ := range cmd.PlayerFuncs {
+			pFunc := cmd.PlayerFuncs[index]
+
 			//Adds the custom widget made and will eventually allow you to edit the command by clicking on the label
 			playerFuncCont.Add(PluginWidgets.NewClickableLabel(
-				playerFuncs.Name,
+				pFunc.Name,
 				// Debugging for the time being
 				func() {
-					log.Print(playerFuncs.Name)
+					log.Print(pFunc.Name)
 				},
 				func() {
 					log.Print("Right Clicked")
