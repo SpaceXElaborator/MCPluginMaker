@@ -13,7 +13,7 @@ import (
 type PluginFunctionSelector struct {
 	widget.BaseWidget
 
-	label   widget.Label
+	label   *canvas.Text
 	hovered bool
 }
 
@@ -27,7 +27,7 @@ func (pfs *PluginFunctionSelector) CreateRenderer() fyne.WidgetRenderer {
 	pfs.ExtendBaseWidget(pfs)
 	background := canvas.NewRectangle(theme.InputBackgroundColor())
 	line := canvas.NewRectangle(theme.ShadowColor())
-	label := widget.NewLabel("Test")
+	label := canvas.NewText("Click To Select Function...", theme.ForegroundColor())
 	objects := []fyne.CanvasObject{label, background, line}
 
 	pfsr := &PluginFunctionSelectorRenderer{
@@ -40,6 +40,12 @@ func (pfs *PluginFunctionSelector) CreateRenderer() fyne.WidgetRenderer {
 	return pfsr
 }
 
+func (pfs *PluginFunctionSelector) Tapped(*fyne.PointEvent) {
+	c := fyne.CurrentApp().Driver().CanvasForObject(pfs)
+	modal := widget.NewModalPopUp(widget.NewLabel("test"), c)
+	modal.Show()
+}
+
 func (pfs *PluginFunctionSelector) MouseIn(*desktop.MouseEvent) {
 	pfs.hovered = true
 	pfs.Refresh()
@@ -47,7 +53,7 @@ func (pfs *PluginFunctionSelector) MouseIn(*desktop.MouseEvent) {
 
 func (pfs *PluginFunctionSelector) MouseMoved(*desktop.MouseEvent) {}
 
-func (pfs *PluginFunctionSelector) MouseOut(*desktop.MouseEvent) {
+func (pfs *PluginFunctionSelector) MouseOut() {
 	pfs.hovered = false
 	pfs.Refresh()
 }
@@ -55,7 +61,7 @@ func (pfs *PluginFunctionSelector) MouseOut(*desktop.MouseEvent) {
 type PluginFunctionSelectorRenderer struct {
 	main *PluginFunctionSelector
 
-	label      *widget.Label
+	label      *canvas.Text
 	background *canvas.Rectangle
 	line       *canvas.Rectangle
 	objects    []fyne.CanvasObject
@@ -74,7 +80,7 @@ func (pfsr *PluginFunctionSelectorRenderer) Layout(size fyne.Size) {
 }
 
 func (pfsr *PluginFunctionSelectorRenderer) MinSize() (size fyne.Size) {
-	return fyne.NewSize(0, 0)
+	return fyne.NewSize(100, 100)
 }
 
 func (pfsr *PluginFunctionSelectorRenderer) Objects() []fyne.CanvasObject {
@@ -84,6 +90,7 @@ func (pfsr *PluginFunctionSelectorRenderer) Objects() []fyne.CanvasObject {
 func (pfsr *PluginFunctionSelectorRenderer) Refresh() {
 	pfsr.label.Refresh()
 	pfsr.background.FillColor = pfsr.resetThemes()
+	pfsr.background.Refresh()
 }
 
 func (pfsr *PluginFunctionSelectorRenderer) resetThemes() color.Color {
