@@ -79,9 +79,14 @@ func removeCommand() *widget.Form {
 	remCommandForm := widget.NewForm(commandNameFormItem)
 	remCommandForm.OnSubmit = func() {
 		if cmdToRem != "" {
-			Projects.GetProject(PluginSettings.GetCWP()).RemoveCommand(cmdToRem)
-			SetNewContent()
-			HideModal()
+			test := dialog.NewConfirm("Remove Command", "Do You Wish To Remove This Command?", func(b bool) {
+				if b {
+					Projects.GetProject(PluginSettings.GetCWP()).RemoveCommand(cmdToRem)
+					SetNewContent()
+					HideModal()
+				}
+			}, GetWindow())
+			test.Show()
 		}
 	}
 
