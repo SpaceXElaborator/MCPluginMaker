@@ -1,9 +1,6 @@
 package plugingui
 
 import (
-	"log"
-	"strings"
-
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -12,7 +9,6 @@ import (
 	"fyne.io/fyne/v2/widget"
 
 	PluginFunction "SpaceXElaborator/PluginMaker/GUI/Functions"
-	PluginWidgets "SpaceXElaborator/PluginMaker/GUI/Widgets"
 	PluginProject "SpaceXElaborator/PluginMaker/Project"
 	PluginSettings "SpaceXElaborator/PluginMaker/Settings"
 )
@@ -131,43 +127,15 @@ func SetNewContent() {
 func createCommandBlocks() fyne.CanvasObject {
 	var test []fyne.CanvasObject
 
-	// Get all the project's commands and create a Toolbar that will ONLY affect that command
-	for _, f := range Projects.GetProject(PluginSettings.GetCWP()).Cmds {
-		toolbar := widget.NewToolbar(
-			widget.NewToolbarAction(theme.ContentAddIcon(), func() {
-				if strings.EqualFold(f.CommandType, "Player") {
-					funcForm := PluginFunction.PlayerCommandFuncAddForm(f, HideModal, SetNewContent, Projects.GetProject(PluginSettings.CWP).Items)
-					modal = widget.NewModalPopUp(widget.NewCard("Add Command Function", "", funcForm), w.Canvas())
-					modal.Resize(fyne.NewSize(512, 0))
-					modal.Show()
-				}
-			}),
-			widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
+	pluginCmds := Projects.GetProject(PluginSettings.GetCWP()).Cmds
 
-			}),
-		)
+	// Get all the project's commands and create a Toolbar that will ONLY affect that command
+	for _, f := range pluginCmds {
+		toolbar := PluginFunction.CreateToolbarForCommand(f, HideModal, SetNewContent, Projects.GetProject(PluginSettings.GetCWP()).Items)
+
+		accItems := PluginFunction.BuildCmdCard(f)
 
 		// This will display all of the PlayerFuncs in a list for the user to be able to view
-		var accItems []*widget.AccordionItem
-		if len(f.PlayerFuncs) >= 1 {
-			playerFuncCont := container.NewVBox()
-			for _, playerFuncs := range f.PlayerFuncs {
-				// Adds the custom widget made and will eventually allow you to edit the command by clicking on the label
-				playerFuncCont.Add(PluginWidgets.NewClickableLabel(
-					playerFuncs.Name,
-					// Debugging for the time being
-					func() {
-						log.Print("Double Clicked")
-					},
-					func() {
-						log.Print("Right Clicked")
-					},
-				))
-			}
-
-			accItems = append(accItems, widget.NewAccordionItem("Player Functions", playerFuncCont))
-		}
-
 		max := container.NewBorder(
 			toolbar,
 			nil,
@@ -190,7 +158,7 @@ func createCommandBlocks() fyne.CanvasObject {
 		test = append(test, card)
 	}
 
-	content := container.NewVScroll(container.NewGridWrap(fyne.NewSize(300, 350), test...))
+	content := container.NewVScroll(container.NewGridWrap(fyne.NewSize(275, 350), test...))
 	return content
 }
 
