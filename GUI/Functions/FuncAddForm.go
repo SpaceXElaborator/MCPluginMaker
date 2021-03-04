@@ -31,12 +31,12 @@ func InitCommands(canv *fyne.Canvas, win *fyne.Window) {
 }
 
 // PlayerCommandFuncAddForm Creates a form to add a player based Java method to the commands PlayerFuncs to be exported and built in Java
-func playerCommandFuncAddForm(cmd *PluginCommands.Command, HideModal, ContentFunc func(), items []*PluginItems.CustomItem) *widget.Form {
+func playerCommandFuncAddForm(cmd *PluginCommands.Command, ContentFunc func(), items []*PluginItems.CustomItem) *widget.Form {
 	funcForm := widget.NewForm()
 	cmdTypes := []string{"Add Item", "Add Custom Item", "Set Health", "Set Food Level", "Send Message", "Set Display Name", "Set Level", "Set Exp", "Set Max Health", "Set Gamemode"}
 
 	cmdFuncType := widget.NewSelect(cmdTypes, func(s string) {
-		HideModal()
+		modal.Hide()
 		if s == "Add Custom Item" {
 			modal = widget.NewModalPopUp(widget.NewCard(s, "", spawnItemForm(ContentFunc, items, window, cmd, true)), *canvas)
 		} else if s == "Add Item" {
@@ -70,7 +70,7 @@ func playerCommandFuncAddForm(cmd *PluginCommands.Command, HideModal, ContentFun
 	funcForm.AppendItem(cmdFuncTypeFormItem)
 
 	funcForm.OnCancel = func() {
-		HideModal()
+		modal.Hide()
 	}
 	funcForm.Refresh()
 	return funcForm

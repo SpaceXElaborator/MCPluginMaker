@@ -131,7 +131,7 @@ func createCommandBlocks() fyne.CanvasObject {
 
 	// Get all the project's commands and create a Toolbar that will ONLY affect that command
 	for _, f := range pluginCmds {
-		toolbar := PluginFunction.CreateToolbarForCommand(f, HideModal, SetNewContent, Projects.GetProject(PluginSettings.GetCWP()).Items)
+		toolbar := PluginFunction.CreateToolbarForCommand(f, SetNewContent, Projects.GetProject(PluginSettings.GetCWP()).Items)
 
 		accItems := PluginFunction.BuildCmdCard(f)
 

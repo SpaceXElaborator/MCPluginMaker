@@ -13,11 +13,12 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func CreateToolbarForCommand(cmd *PluginCommands.Command, HideModal, SetNewContent func(), items []*PluginItems.CustomItem) *widget.Toolbar {
+func CreateToolbarForCommand(cmd *PluginCommands.Command, SetNewContent func(), items []*PluginItems.CustomItem) *widget.Toolbar {
+	test := cmd
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
-			if strings.EqualFold(cmd.Name, "Player") {
-				funcForm := playerCommandFuncAddForm(cmd, HideModal, SetNewContent, items)
+			if strings.EqualFold(test.CommandType, "Player") {
+				funcForm := playerCommandFuncAddForm(test, SetNewContent, items)
 				modal = widget.NewModalPopUp(widget.NewCard("Add Command Function", "", funcForm), *canvas)
 				modal.Resize(fyne.NewSize(512, 0))
 				modal.Show()
