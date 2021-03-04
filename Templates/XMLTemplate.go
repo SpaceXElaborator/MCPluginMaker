@@ -1,5 +1,6 @@
-package PluginTemplates
+package plugintemplates
 
+// GetPomTemplate Outputs the template string for a pom.yml file
 func GetPomTemplate() string {
 	return `<project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

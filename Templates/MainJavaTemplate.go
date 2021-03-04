@@ -1,5 +1,6 @@
-package PluginTemplates
+package plugintemplates
 
+// GetMainClassTemplate Outputs the string template for the Main.java class
 func GetMainClassTemplate() string {
 	return `package com.{{.Author}}.net;
 

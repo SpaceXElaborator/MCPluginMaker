@@ -1,5 +1,6 @@
-package PluginTemplates
+package plugintemplates
 
+// GetItemUtilClassTemplate Outputs the string template of creating the Utility Item creation java file
 func GetItemUtilClassTemplate() string {
 	return `package com.{{.Author}}.net;
 

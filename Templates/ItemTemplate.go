@@ -1,5 +1,6 @@
-package PluginTemplates
+package plugintemplates
 
+// GetItemTemplate Outputs the string template for adding custom items to the plugin
 func GetItemTemplate() string {
 	return `package com.{{.Author}}.net;
 
