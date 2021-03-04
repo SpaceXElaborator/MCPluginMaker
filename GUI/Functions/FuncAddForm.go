@@ -24,7 +24,7 @@ type valueType struct {
 	values []string
 }
 
-// Going to be used to create some variables that will be used for creating commands+
+// InitCommands Going to be used to create some variables that will be used for creating commands+
 func InitCommands(canv *fyne.Canvas, win *fyne.Window) {
 	canvas = canv
 	window = win
