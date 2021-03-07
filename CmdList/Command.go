@@ -22,7 +22,11 @@ func (cmd *Command) AddPlayerFunc(name, strFunc string) {
 	cmd.PlayerFuncs = append(cmd.PlayerFuncs, &PluginFunction.Function{Name: name, Func: strFunc})
 }
 
-// AddSubCommand Adds a child command to the main command (I.E /{main command} {sub command})
+func (cmd *Command) RemPlayerFunc(name string) {
+
+}
+
+// AddSubCommand Adds a child command to the main command (I.E /{main command} {sub command} {further sub command})
 func (cmd *Command) AddSubCommand(sub *Command) {
 	for _, subs := range cmd.SubCommands {
 		if strings.EqualFold(subs.SlashCommand, sub.SlashCommand) {
